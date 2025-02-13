@@ -1,17 +1,22 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {
+  Book,
   BookOpen,
   Camera,
   CreditCard,
   Library,
   Search,
+  ShoppingBag,
   Store,
   Tag,
   Truck,
   Wallet,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
+import NewBooks from "./components/NewBooks";
 
 export default function Home() {
   const bannerImages = [
@@ -104,7 +109,7 @@ export default function Home() {
   }, []);
   return (
     <main className='min-h-screen'>
-      <section className='relative h-[600px] overflow-hidden'>
+      <section className='relative h-[700px] overflow-hidden'>
         {bannerImages.map((image, index) => (
           <div
             className={`absolute inset-0 transition-opacity duration-1000 ${
@@ -119,9 +124,53 @@ export default function Home() {
               className='object-cover'
               fill
             />
+            <div className='absolute inset-0 bg-black/50' />
           </div>
         ))}
+        <div className='relative inset-0 h-full text-white flex flex-col items-center justify-center text-center'>
+          <p className='text-4xl md:text-6xl font-bold mb-8 '>
+            Your one-stop platform for buying and selling used books.
+          </p>
+          <div className='flex flex-col md:flex-row gap-4 mt-8 '>
+            <Button
+              size='lg'
+              className='group bg-gradient-to-r from-purple-200 via-pink-300 to-red-200 hover:from-purple-300 hover:via-pink-400 hover:to-red-300 hover:shadow-lg transition-transform transform hover:scale-105'
+            >
+              <Link href='/books'>
+                <div className='flex items-center gap-2'>
+                  <ShoppingBag className='w-6 h-6 ' />
+                  <span className='text-lg '>Buy Books</span>
+                </div>
+              </Link>
+            </Button>
+            <Button
+              size='lg'
+              className='group bg-gradient-to-r from-blue-500 via-indigo-600 to-blue-500 
+             hover:from-blue-600 hover:via-indigo-700 hover:to-blue-600 
+             text-white shadow-md hover:shadow-lg transition-transform transform hover:scale-[1.02] rounded-md'
+            >
+              <Link href='/book-sell'>
+                <div className='flex items-center gap-2'>
+                  <Book className='w-6 h-6 ' />
+                  <span className='text-lg '>Sell Books</span>
+                </div>
+              </Link>
+            </Button>
+          </div>
+        </div>
       </section>
+      <NewBooks />
+      <Button
+        size='lg'
+        className='group bg-gradient-to-r from-purple-200 via-pink-300 to-red-200 hover:from-purple-300 hover:via-pink-400 hover:to-red-300 hover:shadow-lg transition-transform transform hover:scale-105'
+      >
+        <Link href='/books'>
+          <div className='flex items-center gap-2'>
+            <Library className='w-6 h-6 ' />
+            <span className='text-lg '>Explore All Books</span>
+          </div>
+        </Link>
+      </Button>
     </main>
   );
 }
