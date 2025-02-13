@@ -138,8 +138,8 @@ export default function Home() {
             >
               <Link href='/books'>
                 <div className='flex items-center gap-2'>
-                  <ShoppingBag className='w-6 h-6 ' />
-                  <span className='text-lg '>Buy Books</span>
+                  <ShoppingBag className='w-6 h-6 text-black' />
+                  <span className='text-lg text-black'>Buy Books</span>
                 </div>
               </Link>
             </Button>
@@ -152,7 +152,7 @@ export default function Home() {
               <Link href='/book-sell'>
                 <div className='flex items-center gap-2'>
                   <Book className='w-6 h-6 ' />
-                  <span className='text-lg '>Sell Books</span>
+                  <span className='text-lg'>Sell Books</span>
                 </div>
               </Link>
             </Button>
@@ -166,8 +166,8 @@ export default function Home() {
       >
         <Link href='/books'>
           <div className='flex items-center gap-2'>
-            <Library className='w-6 h-6 ' />
-            <span className='text-lg '>Explore All Books</span>
+            <Library className='w-6 h-6 text-black' />
+            <span className='text-lg text-black'>Explore All Books</span>
           </div>
         </Link>
       </Button>

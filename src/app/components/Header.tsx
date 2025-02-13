@@ -212,7 +212,7 @@ const Header = () => {
   };
 
   return (
-    <header className='sticky top-0 z-50 w-full border-b bg-slate-100 text-black dark:text-white dark:border-gray-800 dark:bg-black/85'>
+    <header className='sticky top-0 z-50 py-4 w-full border-b bg-slate-100/45 text-black dark:text-white dark:border-gray-800 dark:bg-black/45 backdrop-blur-md'>
       <div className='container mx-auto flex h-16 max-w-6xl items-center justify-center md:px-6'>
         <div className='container mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6'>
           <Link href='/' className='flex items-center gap-2 ' prefetch={false}>
@@ -305,8 +305,11 @@ const Header = () => {
                     <span className='hidden lg:block'>My Account</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className='w-[300px] p-4 '>
-                  <MenuItems />
+                <DropdownMenuContent
+                  className='w-[300px] p-4 backdrop-blur-md bg-opacity-95
+                '
+                >
+                  <MenuItems classname='' />
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
