@@ -134,7 +134,8 @@ export default function Home() {
           <div className='flex flex-col md:flex-row gap-4 mt-8 '>
             <Button
               size='lg'
-              className='group bg-gradient-to-r from-purple-200 via-pink-300 to-red-200 hover:from-purple-300 hover:via-pink-400 hover:to-red-300 hover:shadow-lg transition-transform transform hover:scale-105'
+              variant={"outline"}
+              className='group bg-white hover:shadow-lg transition-transform transform hover:scale-105'
             >
               <Link href='/books'>
                 <div className='flex items-center gap-2'>
@@ -145,8 +146,7 @@ export default function Home() {
             </Button>
             <Button
               size='lg'
-              className='group bg-gradient-to-r from-blue-500 via-indigo-600 to-blue-500 
-             hover:from-blue-600 hover:via-indigo-700 hover:to-blue-600 
+              className='group bg-black
              text-white shadow-md hover:shadow-lg transition-transform transform hover:scale-[1.02] rounded-md'
             >
               <Link href='/book-sell'>
