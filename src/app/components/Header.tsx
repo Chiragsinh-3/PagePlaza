@@ -305,10 +305,7 @@ const Header = () => {
                     <span className='hidden lg:block'>My Account</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className='w-[300px] p-4 backdrop-blur-md bg-opacity-95
-                '
-                >
+                <DropdownMenuContent className='w-[300px] p-4'>
                   <MenuItems classname='' />
                 </DropdownMenuContent>
               </DropdownMenu>
