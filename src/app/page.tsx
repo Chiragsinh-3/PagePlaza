@@ -238,13 +238,13 @@ export default function Home() {
           </div>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-8  mt-10'>
             {blogPosts.map((post, index) => (
-              <div className='flex flex-col items-center' key={index}>
-                <div className='bg-gray-50 dark:bg-slate-900 min-h-[420px] rounded-lg shadow-md'>
-                  <div>
+              <div className='flex flex-col items-center ' key={index}>
+                <div className='bg-gray-50 dark:bg-slate-900 min-h-[420px] rounded-lg shadow-md overflow-hidden'>
+                  <div className='overflow-hidden'>
                     <Image
                       src={post.imageSrc}
                       alt='Blog Image'
-                      className='w-full h-60 object-cover rounded-lg'
+                      className='w-full h-60 object-cover rounded-lg hover:scale-105 transition-all'
                       width={400}
                       height={250}
                     />
