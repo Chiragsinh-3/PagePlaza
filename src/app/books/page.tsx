@@ -36,7 +36,9 @@ const page = () => {
 
   const toggleFilter = (section: string, item: string) => {
     const updatedFilter = (prev: string[]) => {
-      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item];
+      return prev.includes(item)
+        ? prev.filter((i) => i !== item)
+        : [...prev, item];
     };
     switch (section) {
       case "condition":
@@ -201,17 +203,19 @@ const page = () => {
                       exit={{ opacity: 0, y: 20 }}
                       className=' rounded-lg  '
                     >
-                      <Card className='group relative rounded-lg overflow-hidden transition-shadow duration-300 hover:shadow-2xl border-0'>
+                      <Card className='group relative min-h-full rounded-lg overflow-hidden transition-shadow duration-300 hover:shadow-2xl border-0'>
                         <CardContent className='p-0'>
                           <Link href={`/books/${book._id}`}>
                             <div className='relative'>
-                              <Image
-                                src={book.images[0]}
-                                alt={book.title}
-                                width={400}
-                                height={300}
-                                className='h-[250px] w-full object-cover transition-transform duration-300 group-hover:scale-105'
-                              />
+                              {book.images[0] && (
+                                <Image
+                                  src={book.images[0]}
+                                  alt={book.title}
+                                  width={400}
+                                  height={300}
+                                  className='h-[250px] w-full object-cover transition-transform duration-300 group-hover:scale-105'
+                                />
+                              )}
                               <div className='absolute top-2 left-0 z-10 flex flex-col gap-2'>
                                 {calculateDiscount(
                                   book.price,
@@ -235,7 +239,7 @@ const page = () => {
                                 <Heart className='text-red-500 h-4 w-4' />
                               </Button>
                             </div>
-                            <div className='p-4 space-y-2'>
+                            <div className='p-4 pt-10 space-y-2'>
                               <div className='flex items-start justify-between'>
                                 <h3 className='text-lg font-semibold'>
                                   {book.title}
