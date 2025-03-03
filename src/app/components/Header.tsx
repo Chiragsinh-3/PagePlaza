@@ -213,7 +213,7 @@ const Header = () => {
 
   return (
     <header className='sticky top-0 z-50 py-4 w-full border-b bg-slate-100/45 text-black dark:text-white dark:border-gray-800 dark:bg-black/45 backdrop-blur-md'>
-      <div className='container mx-auto flex h-16 max-w-6xl items-center justify-center md:px-6'>
+      <div className='container mx-auto flex h-[5vh] max-w-6xl items-center justify-center md:px-6'>
         <div className='container mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6'>
           <Link href='/' className='flex items-center gap-2 ' prefetch={false}>
             <p className='sm:font-semibold mr-2 text-xs sm:text-sm font-light'>
@@ -272,7 +272,7 @@ const Header = () => {
 
             {/* Sell used books button */}
             <div className=' items-center gap-6   font-medium md:flex'>
-              <Link href='/sell-used-books'>
+              <Link href='/book-sell'>
                 <Button
                   variant='ghost'
                   className='bg-slate-400/5 text-[10px] sm:text-[12px]'

@@ -82,20 +82,20 @@ export default function Home() {
       title: "Select the used books you want",
       description:
         "Search from over thousands of used books listed on BookKart.",
-      icon: <Search className='h-8 w-8 text-primary text-white' />,
+      icon: <Search className='h-8 w-8 text-primary' />,
     },
     {
       step: "Step 2",
       title: "Place the order by making payment",
       description:
         "Then simply place the order by clicking on the 'Buy Now' button.",
-      icon: <CreditCard className='h-8 w-8 text-primary text-white' />,
+      icon: <CreditCard className='h-8 w-8 text-primary ' />,
     },
     {
       step: "Step 3",
       title: "Get the books delivered at your doorstep",
       description: "The books will be delivered to you at your doorstep!",
-      icon: <Truck className='h-8 w-8 text-primary text-white' />,
+      icon: <Truck className='h-8 w-8 text-primary ' />,
     },
   ];
   const [currentImagge, setCurrentImage] = useState(0);
@@ -124,30 +124,31 @@ export default function Home() {
               className='object-cover'
               fill
             />
-            <div className='absolute inset-0 bg-black/50' />
+            <div className='absolute inset-0 bg-black/40 dark:bg-black/70' />
           </div>
         ))}
         <div className='relative inset-0 h-full text-white flex flex-col items-center justify-center text-center'>
-          <p className='text-4xl md:text-6xl font-bold mb-8 '>
+          <p className='text-4xl md:text-5xl font-bold mb-8 '>
             Your one-stop platform for buying and selling used books.
           </p>
           <div className='flex flex-col md:flex-row gap-4 mt-8 '>
             <Button
               size='lg'
               variant={"outline"}
-              className='group bg-white hover:shadow-lg transition-transform transform hover:scale-105'
+              className='group border-none  shadow-md  bg-white text-black hover:shadow-lg transition-transform transform hover:scale-105'
             >
               <Link href='/books'>
-                <div className='flex items-center gap-2'>
-                  <ShoppingBag className='w-6 h-6 text-black' />
-                  <span className='text-lg text-black'>Buy Books</span>
+                <div className='flex items-center gap-2 '>
+                  <ShoppingBag className='w-6 h-6 ' />
+                  <span className='text-lg '>Buy Books</span>
                 </div>
               </Link>
             </Button>
             <Button
               size='lg'
+              variant={"ghost"}
               className='group bg-black
-             text-white shadow-md hover:shadow-lg transition-transform transform hover:scale-[1.02] rounded-md'
+             text-white shadow-md hover:shadow-lg transition-transform transform hover:scale-105 rounded-md'
             >
               <Link href='/book-sell'>
                 <div className='flex items-center gap-2'>
@@ -172,28 +173,65 @@ export default function Home() {
         </Link>
       </Button>
 
-      {/* How to sell Section */}
-      <section className='py-20 bg-amber-50 dark:bg-gray-800'>
-        <div className='container mx-auto px-4'>
-          <div className='  mb-12 '>
-            <h2 className='text-3xl font-bold mb-6'>
-              How To Sell Your Old Books Using PagePlaza
+      {/* How to Sell Section */}
+      <section className='py-16 bg-gradient-to-r from-amber-50 to-amber-100 dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-900 cursor-default'>
+        <div className='container mx-auto px-6 max-w-5xl'>
+          <div className='text-center mb-16'>
+            <h2 className='text-3xl md:text-4xl font-bold mb-4 relative inline-block'>
+              <span className='relative z-10'>How To Sell Your Books</span>
+              <span className='absolute -bottom-2 left-0 w-full h-2 bg-amber-300 dark:bg-amber-600 opacity-40 rounded-lg'></span>
             </h2>
-            <p className='text-lg text-gray-600'>
-              Selling your old books is easy and quick with PagePlaza. Follow
-              these simple steps to sell your books online.
+            <p className='text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto'>
+              Turn your unused books into cash with our simple three-step
+              process.
             </p>
           </div>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-8  mt-10'>
+
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
             {sellSteps.map((step, index) => (
-              <div className='flex flex-col items-center' key={index}>
-                <div className='bg-white dark:bg-slate-900 p-4 min-h-60 rounded-lg shadow-md'>
-                  <div className='bg-white flex items-center dark:bg-slate-600 p-4 rounded-xl shadow-md'>
-                    {step.icon}
-                    <h3 className='text-2xl font-semibold ml-4'>{step.step}</h3>
+              <div
+                key={index}
+                className='group transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl'
+              >
+                <div className='bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden h-full flex flex-col'>
+                  <div className='p-6 flex-grow'>
+                    <div className='flex items-center mb-6'>
+                      <div className='text-amber-500 dark:text-amber-400'>
+                        {step.icon}
+                      </div>
+                      <span className='ml-3 text-sm font-medium text-gray-500 dark:text-gray-400'>
+                        Step {index + 1}
+                      </span>
+                    </div>
+
+                    <h3 className='text-xl font-bold mb-3 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors'>
+                      {step.title}
+                    </h3>
+
+                    <p className='text-gray-600 dark:text-gray-300'>
+                      {step.description}
+                    </p>
                   </div>
-                  <h4 className='text-xl font-semibold mt-5'>{step.title}</h4>
-                  <p className='text-gray-600 mt-3'>{step.description}</p>
+
+                  <div className='bg-amber-50 dark:bg-gray-700 px-6 py-4 group-hover:bg-amber-100 dark:group-hover:bg-gray-600 transition-colors'>
+                    <button className='text-sm font-medium text-amber-600 dark:text-amber-400 flex items-center'>
+                      Learn more
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        className='h-4 w-4 ml-1 transition-transform group-hover:translate-x-1'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        stroke='currentColor'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M14 5l7 7m0 0l-7 7m7-7H3'
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -201,37 +239,73 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How to buy Section */}
-      <section className='py-20 bg-gradient-to-b from-gray-50 to-white dark:bg-gradient-to-b dark:from-slate-700 dark:to-slate-800'>
-        <div className='container mx-auto px-4'>
-          <div className='  mb-12 '>
-            <h2 className='text-3xl font-bold mb-6'>
-              How To Buy Your Old Books Using PagePlaza
+      {/* How to Buy Section */}
+      <section className='py-16 bg-white dark:bg-gray-900 cursor-default'>
+        <div className='container mx-auto px-6 max-w-5xl'>
+          <div className='text-center mb-16'>
+            <h2 className='text-3xl md:text-4xl font-bold mb-4 relative inline-block'>
+              <span className='relative z-10'>How To Buy Books</span>
+              <span className='absolute -bottom-2 left-0 w-full h-2 bg-blue-300 dark:bg-blue-600 opacity-40 rounded-lg'></span>
             </h2>
-            <p className='text-lg text-gray-500'>
-              Selling your old books is easy and quick with PagePlaza. Follow
-              these simple steps to sell your books online.
+            <p className='text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto'>
+              Find your next great read at unbeatable prices with these simple
+              steps.
             </p>
           </div>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-8  mt-10'>
+
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
             {buySteps.map((step, index) => (
-              <div className='flex flex-col items-center' key={index}>
-                <div className='bg-gray-300 dark:bg-slate-900 p-4 min-h-60 rounded-lg shadow-md'>
-                  <div className='bg-gray-600 flex text-white items-center dark:bg-slate-600 p-4 rounded-xl shadow-md'>
-                    {step.icon}
-                    <h3 className='text-2xl font-semibold ml-4'>{step.step}</h3>
+              <div
+                key={index}
+                className='group transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl'
+              >
+                <div className='bg-blue-50 dark:bg-gray-800 rounded-xl shadow-md overflow-hidden h-full flex flex-col'>
+                  <div className='p-6 flex-grow'>
+                    <div className='flex items-center mb-6'>
+                      <div className='text-blue-500 dark:text-blue-400'>
+                        {step.icon}
+                      </div>
+                      <span className='ml-3 text-sm font-medium text-gray-500 dark:text-gray-400'>
+                        Step {index + 1}
+                      </span>
+                    </div>
+
+                    <h3 className='text-xl font-bold mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors'>
+                      {step.title}
+                    </h3>
+
+                    <p className='text-gray-600 dark:text-gray-300'>
+                      {step.description}
+                    </p>
                   </div>
-                  <h4 className='text-xl font-semibold mt-5'>{step.title}</h4>
-                  <p className='text-gray-600 mt-3'>{step.description}</p>
+
+                  <div className='bg-blue-100 dark:bg-gray-700 px-6 py-4 group-hover:bg-blue-200 dark:group-hover:bg-gray-600 transition-colors'>
+                    <button className='text-sm font-medium text-blue-600 dark:text-blue-400 flex items-center'>
+                      Learn more
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        className='h-4 w-4 ml-1 transition-transform group-hover:translate-x-1'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        stroke='currentColor'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M14 5l7 7m0 0l-7 7m7-7H3'
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </section>
-
       {/* Read blog */}
-      <section className='py-20 bg-gradient-to-b from-blue-100 to-white dark:bg-gradient-to-b dark:from-blue-900/30 dark:to-slate-800'>
+      <section className='py-20 bg-gradient-to-b from-blue-100 to-white dark:bg-gradient-to-b dark:from-zinc-900/50 dark:to-black'>
         <div className='container mx-auto px-4'>
           <div className='  mb-12 '>
             <h2 className='text-3xl font-bold mb-6'>Read from our Blog</h2>

@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { Roboto_Mono } from "next/font/google";
 import LayoutWrapper from "./LayoutWrapper";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { ThemeProvider } from "../context/ThemeProvider"; // Import the provider
 
@@ -29,6 +30,7 @@ export default function RootLayout({
           <LayoutWrapper>
             <Header />
             {children}
+            <Toaster />
             <Footer />
           </LayoutWrapper>
         </ThemeProvider>
