@@ -9,7 +9,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { books, filters } from "@/lib/BookData";
 import Link from "next/link";
 import React, { useState } from "react";
-import { formatDistanceToNow } from "date-fns";
 import BookLoader from "@/lib/BookLoader";
 import { motion } from "framer-motion";
 import {
@@ -115,7 +114,12 @@ const page = () => {
   };
   const formatDate = (dateString: Date) => {
     const date = new Date(dateString);
-    return formatDistanceToNow(date, { addSuffix: true });
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    return date.toLocaleDateString(undefined, options);
   };
   return (
     <div className='min-h-screen '>
@@ -276,6 +280,37 @@ const page = () => {
               <></>
             )}
           </div>
+        </div>
+        <div className='flex justify-center mt-8'>
+          <button
+            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            className='mx-1 px-4 py-2 rounded-md bg-zinc-500 text-white disabled:opacity-50'
+          >
+            {"<"}
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              className={`mx-1 px-4 py-2 rounded-md ${
+                currentPage === page
+                  ? " bg-gray-200 text-gray-700"
+                  : "bg-zinc-500  text-white hover:bg-gray-300"
+              }`}
+              onClick={() => handlePageChange(page)}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            onClick={() =>
+              handlePageChange(Math.min(totalPages, currentPage + 1))
+            }
+            disabled={currentPage === totalPages || totalPages === 0}
+            className='mx-1 px-4 py-2 rounded-md bg-zinc-500 text-white disabled:opacity-50'
+          >
+            {">"}
+          </button>
         </div>
       </div>
     </div>

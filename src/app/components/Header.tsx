@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Toggle } from "@/components/ui/toggle";
+import AuthPage from "./AuthPage";
 import {
   Sheet,
   SheetTrigger,
@@ -49,8 +50,8 @@ const Header = () => {
 
   const user = {
     profile: null,
-    name: "John Doe",
-    email: "johndoe@gmail.com",
+    name: null,
+    email: null,
   };
   const userPlaceholder = "null";
 
@@ -214,6 +215,11 @@ const Header = () => {
   return (
     <header className='sticky top-0 z-50 py-4 w-full border-b bg-slate-100/45 text-black dark:text-white dark:border-gray-800 dark:bg-black/45 backdrop-blur-md'>
       <div className='container mx-auto flex h-[5vh] max-w-6xl items-center justify-center md:px-6'>
+        <AuthPage
+          isLoginOpen={isLoginOpen}
+          setIsLoginOpen={() => dispatch(toggleLoginDialog())}
+        />
+
         <div className='container mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6'>
           <Link href='/' className='flex items-center gap-2 ' prefetch={false}>
             <p className='sm:font-semibold mr-2 text-xs sm:text-sm font-light'>
