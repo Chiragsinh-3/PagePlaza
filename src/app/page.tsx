@@ -307,35 +307,51 @@ export default function Home() {
       {/* Read blog */}
       <section className='py-20 bg-gradient-to-b from-blue-100 to-white dark:bg-gradient-to-b dark:from-zinc-900/50 dark:to-black'>
         <div className='container mx-auto px-4'>
-          <div className='  mb-12 '>
-            <h2 className='text-3xl font-bold mb-6'>Read from our Blog</h2>
+          <div className='mb-12 transform hover:scale-105 transition-transform duration-300'>
+            <h2 className='text-3xl font-bold mb-6 relative inline-block'>
+              Read from our Blog
+              <span className='absolute bottom-0 left-0 w-full h-1 bg-blue-400 transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100'></span>
+            </h2>
           </div>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-8  mt-10'>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-8 mt-10'>
             {blogPosts.map((post, index) => (
-              <div className='flex flex-col items-center ' key={index}>
-                <div className='bg-gray-50 dark:bg-slate-900 min-h-[420px] rounded-lg shadow-md overflow-hidden'>
+              <div
+                className='flex flex-col items-center transform hover:-translate-y-2 transition-all duration-300 ease-in-out'
+                key={index}
+              >
+                <div className='bg-gray-50 dark:bg-slate-900 min-h-[420px] rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300'>
                   <div className='overflow-hidden'>
                     <Image
                       src={post.imageSrc}
                       alt='Blog Image'
-                      className='w-full h-60 object-cover rounded-lg hover:scale-105 transition-all'
+                      className='w-full h-60 object-cover rounded-lg transform transition-transform duration-500 hover:scale-110'
                       width={400}
                       height={250}
                     />
                   </div>
                   <div className='flex flex-col flex-grow px-8 pt-8'>
-                    <div className='flex'>
-                      {post.icon}
-                      <h4 className='text-xl font-semibold ml-5'>
+                    <div className='flex items-center transform hover:translate-x-2 transition-transform duration-300'>
+                      <div className='transform hover:rotate-12 transition-transform duration-300'>
+                        {post.icon}
+                      </div>
+                      <h4 className='text-xl font-semibold ml-5 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300'>
                         {post.title}
                       </h4>
                     </div>
-                    <p className='text-gray-600 text-sm mt-3 flex-grow'>
+                    <p className='text-gray-600 text-sm mt-3 flex-grow hover:text-gray-900 dark:hover:text-gray-300 transition-colors duration-300'>
                       {post.description}
                     </p>
-                    <div className='text-center '>
-                      <Button variant={"link"} className='mt-4 '>
-                        <span className='text-center'>Read More -{">"}</span>
+                    <div className='text-center'>
+                      <Button
+                        variant={"link"}
+                        className='mt-4 group transition-all duration-300 hover:text-blue-600'
+                      >
+                        <span className='inline-flex items-center'>
+                          Read More
+                          <span className='transform translate-x-0 group-hover:translate-x-2 transition-transform duration-300'>
+                            →
+                          </span>
+                        </span>
                       </Button>
                     </div>
                   </div>

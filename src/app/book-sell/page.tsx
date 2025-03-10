@@ -20,9 +20,11 @@ import { books, filters } from "@/lib/BookData";
 import {
   Book,
   CircleHelp,
+  Eye,
   FileQuestion,
   IndianRupeeIcon,
   ReceiptIndianRupee,
+  X,
 } from "lucide-react";
 import React from "react";
 // import DragAndDrop from "../components/DragAndDrop";
@@ -55,10 +57,12 @@ const Page = () => {
     mrp: "",
     finalPrice: "",
     shippingCharge: "",
-    upiId: "",
-    bankName: "",
-    accountNumber: "",
-    ifscCode: "",
+    paymentDetails: {
+      upiId: "",
+      bankName: "",
+      accountNumber: "",
+      ifscCode: "",
+    },
     images: [] as File[], // Add this new field
   });
 
@@ -85,10 +89,25 @@ const Page = () => {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (
+      name === "upiId" ||
+      name === "bankName" ||
+      name === "accountNumber" ||
+      name === "ifscCode"
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        paymentDetails: {
+          ...prev.paymentDetails,
+          [name]: value,
+        },
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -96,6 +115,7 @@ const Page = () => {
 
     // Create FormData object to handle file uploads
     const submitData = new FormData();
+
     // Check for minimum 3 images
     if (formData.images.length < 3) {
       toast("Validation Error", {
@@ -121,7 +141,7 @@ const Page = () => {
     }
 
     // Validate payment details
-    if (paymentMode === "upi" && !formData.upiId) {
+    if (paymentMode === "upi" && !formData.paymentDetails.upiId) {
       toast("Validation Error", {
         description: "Please enter UPI ID",
       });
@@ -130,14 +150,17 @@ const Page = () => {
 
     if (
       paymentMode === "bank" &&
-      (!formData.bankName || !formData.accountNumber || !formData.ifscCode)
+      (!formData.paymentDetails.bankName ||
+        !formData.paymentDetails.accountNumber ||
+        !formData.paymentDetails.ifscCode)
     ) {
       toast("Validation Error", {
         description: "Please enter all bank details",
       });
       return;
     }
-    // Append all form fields
+
+    // Append all form fields except paymentDetails and images
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "images") {
         // Append each image file separately
@@ -146,6 +169,10 @@ const Page = () => {
             submitData.append(`images[${index}]`, file);
           });
         }
+      } else if (key === "paymentDetails") {
+        Object.entries(value).forEach(([k, v]) => {
+          submitData.append(`paymentDetails[${k}]`, v as string);
+        });
       } else {
         submitData.append(key, value as string);
       }
@@ -156,9 +183,15 @@ const Page = () => {
     submitData.append("noShippingCharge", noShippingCharge.toString());
 
     // Log the FormData (for debugging)
-    console.log("Submitting data:", Object.fromEntries(submitData.entries()));
+    const formDataObject = Object.fromEntries(submitData.entries());
+    console.log("Submitting data:", formDataObject);
 
-    // Add your API call here
+    const paymentDetailsValue = formDataObject.paymentDetails;
+    if (typeof paymentDetailsValue === "string") {
+      console.log("Payment Details:", JSON.parse(paymentDetailsValue));
+    }
+
+    // Add your API? call here
     // Example:
     // await fetch('/api/sell-book', {
     //   method: 'POST',
@@ -179,6 +212,77 @@ const Page = () => {
         bankName: "",
       }));
     }
+  };
+
+  const handlePreviewClick = (
+    e: { preventDefault: () => void },
+    file: File
+  ) => {
+    e.preventDefault();
+    const popup = document.createElement("div");
+    popup.style.position = "fixed";
+    popup.style.top = "0";
+    popup.style.left = "0";
+    popup.style.right = "0";
+    popup.style.bottom = "0";
+    popup.style.backgroundColor = "rgba(0,0,0,0.8)";
+    popup.style.display = "flex";
+    popup.style.alignItems = "center";
+    popup.style.justifyContent = "center";
+    popup.style.zIndex = "9999";
+
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+    img.style.maxWidth = "90%";
+    img.style.maxHeight = "90%";
+    img.style.objectFit = "contain";
+    img.style.transform = "scale(0.5)";
+    img.style.opacity = "0";
+    img.style.transition = "all 0.3s ease-in-out";
+
+    const closeBtn = document.createElement("button");
+    closeBtn.innerHTML = "×";
+    closeBtn.style.position = "absolute";
+    closeBtn.style.top = "20px";
+    closeBtn.style.right = "20px";
+    closeBtn.style.backgroundColor = "#fff";
+    closeBtn.style.color = "#000";
+    closeBtn.style.width = "40px";
+    closeBtn.style.height = "40px";
+    closeBtn.style.borderRadius = "50%";
+    closeBtn.style.border = "none";
+    closeBtn.style.fontSize = "24px";
+    closeBtn.style.cursor = "pointer";
+    closeBtn.style.transition = "all 0.2s ease";
+
+    closeBtn.onmouseover = () => {
+      closeBtn.style.backgroundColor = "#f0f0f0";
+    };
+    closeBtn.onmouseout = () => {
+      closeBtn.style.backgroundColor = "#fff";
+    };
+
+    const closePopup = () => {
+      img.style.transform = "scale(0.5)";
+      img.style.opacity = "0";
+      setTimeout(() => {
+        document.body.removeChild(popup);
+      }, 300);
+    };
+
+    popup.onclick = (e) => {
+      if (e.target === popup) closePopup();
+    };
+    closeBtn.onclick = closePopup;
+
+    popup.appendChild(img);
+    popup.appendChild(closeBtn);
+    document.body.appendChild(popup);
+
+    setTimeout(() => {
+      img.style.transform = "scale(1)";
+      img.style.opacity = "1";
+    });
   };
 
   return (
@@ -371,17 +475,40 @@ const Page = () => {
                           {formData.images.length > 0 && (
                             <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
                               {formData.images.map((file, index) => (
-                                <div key={index} className='relative group'>
+                                <div
+                                  key={index}
+                                  className='relative group animate-fade-in'
+                                  style={{
+                                    animation: "fadeIn 0.3s ease-in-out",
+                                  }}
+                                >
                                   <img
                                     src={URL.createObjectURL(file)}
                                     alt={`Preview ${index}`}
-                                    className='w-full h-32 object-cover rounded-lg'
+                                    className='w-full h-32 object-cover rounded-lg transition-transform duration-300'
                                   />
                                   <button
-                                    onClick={() => handleRemoveFile(file)}
-                                    className='absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity'
+                                    onClick={(e) => handlePreviewClick(e, file)}
+                                    className='absolute w-6 h-6 top-[10px] right-10 bg-blue-500 text-white p-1 rounded-full '
+                                    title='Preview Image'
                                   >
-                                    ✕
+                                    <Eye className='w-4 h-4' />
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const element =
+                                        e.currentTarget.parentElement;
+                                      element?.classList.add(
+                                        "animate-fade-out"
+                                      );
+                                      setTimeout(() => {
+                                        handleRemoveFile(file);
+                                      }, 300);
+                                    }}
+                                    className='absolute flex items-center justify-center w-6 h-6 p-1 top-[10px] right-2 bg-red-500 text-white rounded-full '
+                                  >
+                                    <X className='w-4 h-4' />
                                   </button>
                                 </div>
                               ))}
@@ -646,7 +773,7 @@ const Page = () => {
                         type='text'
                         name='upiId'
                         id='upiId'
-                        value={formData.upiId}
+                        value={formData.paymentDetails.upiId}
                         onChange={handleChange}
                         placeholder='Enter UPI ID'
                         className='border border-gray-300 rounded-lg px-4 py-2 col-span-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition dark:bg-gray-800 dark:border-gray-600 dark:text-gray-50'
@@ -667,7 +794,7 @@ const Page = () => {
                           type='text'
                           name='bankName'
                           id='bankName'
-                          value={formData.bankName}
+                          value={formData.paymentDetails.bankName}
                           onChange={handleChange}
                           placeholder='Enter Bank Name'
                           className='border border-gray-300 rounded-lg px-4 py-2 col-span-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition dark:bg-gray-800 dark:border-gray-600 dark:text-gray-50'
@@ -685,7 +812,8 @@ const Page = () => {
                           type='text'
                           name='accountNumber'
                           id='accountNumber'
-                          value={formData.accountNumber}
+                          maxLength={16}
+                          value={formData.paymentDetails.accountNumber}
                           onChange={handleChange}
                           placeholder='Enter Account Number'
                           className='border border-gray-300 rounded-lg px-4 py-2 col-span-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition dark:bg-gray-800 dark:border-gray-600 dark:text-gray-50'
@@ -703,7 +831,8 @@ const Page = () => {
                           type='text'
                           name='ifscCode'
                           id='ifscCode'
-                          value={formData.ifscCode}
+                          maxLength={11}
+                          value={formData.paymentDetails.ifscCode}
                           onChange={handleChange}
                           placeholder='Enter IFSC Code'
                           className='border border-gray-300 rounded-lg px-4 py-2 col-span-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition dark:bg-gray-800 dark:border-gray-600 dark:text-gray-50'
