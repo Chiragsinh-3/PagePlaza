@@ -228,3 +228,34 @@ export const api = createApi({
     }),
   }),
 });
+
+export const {
+  useRegisterMutation,
+  useLoginMutation,
+  useVerifyEmailMutation,
+  useLogoutMutation,
+  useForgotPasswordMutation,
+  useResetPasswordMutation,
+  useVerifyAuthMutation,
+  useUpdateUserProfileMutation,
+
+  useProductsQuery,
+  useProductByIdQuery,
+  useProductDeleteMutation,
+  useProductBySellerIdQuery,
+
+  useAddToCartMutation,
+  useCartDeleteMutation,
+  useCartByUserIdQuery,
+
+  useAddToWishlistMutation,
+  useWishlistDeleteMutation,
+  useWishlistByUserIdQuery,
+
+  useCreateOrUpdateAddressMutation,
+  useAddressByUserIdQuery,
+
+  useCreateOrUpdateOrderMutation,
+  useGetOrderByUserQuery,
+  useGetOrderByOrderIdQuery,
+} = api;

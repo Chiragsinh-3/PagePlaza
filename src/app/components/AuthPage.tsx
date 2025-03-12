@@ -12,6 +12,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
+import { useLoginMutation, useRegisterMutation } from "@/store/api";
 
 interface AuthPageProps {
   isLoginOpen: boolean;
@@ -24,29 +25,145 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLoginOpen, setIsLoginOpen }) => {
   const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
   const [signupLoading, setSignupLoading] = useState(false);
-
+  const [register] = useRegisterMutation();
+  const [login] = useLoginMutation();
   const handleTabChange = (value: string) => {
     setCurrentTab(value as "login" | "signup");
   };
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setLoginLoading(false);
-      // Handle successful login
-    }, 1500);
+  // Add form state
+  const [loginForm, setLoginForm] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [signupForm, setSignupForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState({
+    login: { email: "", password: "" },
+    signup: { name: "", email: "", password: "" },
+  });
+
+  // Validation functions
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const validatePassword = (password: string) => {
+    return password.length >= 6;
+  };
+
+  const validateName = (name: string) => {
+    return name.length >= 2;
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginLoading(true);
+
+    // Reset errors
+    setErrors((prev) => ({
+      ...prev,
+      login: { email: "", password: "" },
+    }));
+
+    // Validate
+    let hasErrors = false;
+    if (!validateEmail(loginForm.email)) {
+      setErrors((prev) => ({
+        ...prev,
+        login: { ...prev.login, email: "Please enter a valid email address" },
+      }));
+      hasErrors = true;
+    }
+    if (!validatePassword(loginForm.password)) {
+      setErrors((prev) => ({
+        ...prev,
+        login: {
+          ...prev.login,
+          password: "Password must be at least 6 characters",
+        },
+      }));
+      hasErrors = true;
+    }
+
+    if (!hasErrors) {
+      try {
+        const result = await login({
+          email: loginForm.email,
+          password: loginForm.password,
+        }).unwrap();
+        // Handle successful login
+        setIsLoginOpen(false);
+      } catch (error) {
+        setErrors((prev) => ({
+          ...prev,
+          login: { ...prev.login, password: "Invalid email or password" },
+        }));
+      }
+    }
+    setLoginLoading(false);
+  };
+
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setSignupLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setSignupLoading(false);
-      // Handle successful signup
-    }, 1500);
+
+    // Reset errors
+    setErrors((prev) => ({
+      ...prev,
+      signup: { name: "", email: "", password: "" },
+    }));
+
+    // Validate
+    let hasErrors = false;
+    if (!validateName(signupForm.name)) {
+      setErrors((prev) => ({
+        ...prev,
+        signup: { ...prev.signup, name: "Name must be at least 2 characters" },
+      }));
+      hasErrors = true;
+    }
+    if (!validateEmail(signupForm.email)) {
+      setErrors((prev) => ({
+        ...prev,
+        signup: { ...prev.signup, email: "Please enter a valid email address" },
+      }));
+      hasErrors = true;
+    }
+    if (!validatePassword(signupForm.password)) {
+      setErrors((prev) => ({
+        ...prev,
+        signup: {
+          ...prev.signup,
+          password: "Password must be at least 6 characters",
+        },
+      }));
+      hasErrors = true;
+    }
+
+    if (!hasErrors) {
+      try {
+        const result = await register({
+          name: signupForm.name,
+          email: signupForm.email,
+          password: signupForm.password,
+        }).unwrap();
+        // Handle successful signup
+        setIsLoginOpen(false);
+      } catch (error) {
+        setErrors((prev) => ({
+          ...prev,
+          signup: { ...prev.signup, email: "Email already exists" },
+        }));
+      }
+    }
+    setSignupLoading(false);
   };
 
   const handleForgotPassword = () => {
@@ -100,8 +217,20 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLoginOpen, setIsLoginOpen }) => {
                       placeholder='Enter your email'
                       type='email'
                       required
+                      value={loginForm.email}
+                      onChange={(e) =>
+                        setLoginForm((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
                       className='pl-10 transition-all duration-200 focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:focus:ring-blue-500'
                     />
+                    {errors.login.email && (
+                      <p className='text-sm text-red-500'>
+                        {errors.login.email}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -125,6 +254,13 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLoginOpen, setIsLoginOpen }) => {
                       type={showPassword ? "text" : "password"}
                       placeholder='Enter your password'
                       required
+                      value={loginForm.password}
+                      onChange={(e) =>
+                        setLoginForm((prev) => ({
+                          ...prev,
+                          password: e.target.value,
+                        }))
+                      }
                       className='pl-10 pr-10 transition-all duration-200 focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:focus:ring-blue-500'
                     />
                     <button
@@ -138,6 +274,11 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLoginOpen, setIsLoginOpen }) => {
                         <Eye className='h-5 w-5 text-gray-400 dark:text-gray-600' />
                       )}
                     </button>
+                    {errors.login.password && (
+                      <p className='text-sm text-red-500'>
+                        {errors.login.password}
+                      </p>
+                    )}
                   </div>
                 </div>
                 {forgotPasswordSuccess && (
@@ -167,8 +308,20 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLoginOpen, setIsLoginOpen }) => {
                       id='name'
                       placeholder='Enter your full name'
                       required
+                      value={signupForm.name}
+                      onChange={(e) =>
+                        setSignupForm((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
                       className='pl-10 transition-all duration-200 focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:focus:ring-blue-500'
                     />
+                    {errors.signup.name && (
+                      <p className='text-sm text-red-500'>
+                        {errors.signup.name}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -183,8 +336,20 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLoginOpen, setIsLoginOpen }) => {
                       placeholder='Enter your email'
                       type='email'
                       required
+                      value={signupForm.email}
+                      onChange={(e) =>
+                        setSignupForm((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
                       className='pl-10 transition-all duration-200 focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:focus:ring-blue-500'
                     />
+                    {errors.signup.email && (
+                      <p className='text-sm text-red-500'>
+                        {errors.signup.email}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -202,6 +367,13 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLoginOpen, setIsLoginOpen }) => {
                       type={showPassword ? "text" : "password"}
                       placeholder='Create a password'
                       required
+                      value={signupForm.password}
+                      onChange={(e) =>
+                        setSignupForm((prev) => ({
+                          ...prev,
+                          password: e.target.value,
+                        }))
+                      }
                       className='pl-10 pr-10 transition-all duration-200 focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:focus:ring-blue-500'
                     />
                     <button
@@ -215,6 +387,11 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLoginOpen, setIsLoginOpen }) => {
                         <Eye className='h-5 w-5 text-gray-400 dark:text-gray-600' />
                       )}
                     </button>
+                    {errors.signup.password && (
+                      <p className='text-sm text-red-500'>
+                        {errors.signup.password}
+                      </p>
+                    )}
                   </div>
                 </div>
 
