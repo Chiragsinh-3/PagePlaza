@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useCreateProductsMutation } from "@/store/api";
 
 const OptionalDetails: { [key: string]: string[] } = {
   BookInformation: ["Author", "Edition (Year)", "Description"],
@@ -46,24 +47,29 @@ const Page = () => {
   const [addFile, removeFile] = useFileSelection();
   const [noShippingCharge, setNoShippingCharge] = React.useState(false);
   const [paymentMode, setPaymentMode] = React.useState<string>("");
+
+  const [createProduct] = useCreateProductsMutation();
   const [formData, setFormData] = React.useState({
-    bookName: "",
-    bookType: "",
-    condition: "",
-    classType: "",
-    author: "",
-    edition: "",
-    description: "",
-    mrp: "",
-    finalPrice: "",
-    shippingCharge: "",
+    title: "Mathematics NCERT",
+    category: "School",
+    condition: "Good",
+    classType: "Class 10",
+    subject: "Mathematics",
+    author: "RD Sharma",
+    price: "599",
+    edition: "2023",
+    description:
+      "A comprehensive mathematics textbook for class 10 students following NCERT curriculum. The book is in good condition with no markings or torn pages.",
+    finalprice: "399",
+    shippingCharge: "50",
+    paymentMode: "", // Keep this as string
     paymentDetails: {
       upiId: "",
       bankName: "",
       accountNumber: "",
       ifscCode: "",
     },
-    images: [] as File[], // Add this new field
+    images: [] as File[],
   });
 
   // Add new function to handle image files
@@ -110,10 +116,9 @@ const Page = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Create FormData object to handle file uploads
     const submitData = new FormData();
 
     // Check for minimum 3 images
@@ -126,12 +131,13 @@ const Page = () => {
 
     // Check for required fields
     if (
-      !formData.bookName ||
-      !formData.bookType ||
+      !formData.title ||
+      !formData.category ||
       !formData.condition ||
       !formData.classType ||
-      !formData.mrp ||
-      !formData.finalPrice ||
+      !formData.subject ||
+      !formData.price ||
+      !formData.finalprice ||
       (!formData.shippingCharge && !noShippingCharge)
     ) {
       toast("Validation Error", {
@@ -141,7 +147,14 @@ const Page = () => {
     }
 
     // Validate payment details
-    if (paymentMode === "upi" && !formData.paymentDetails.upiId) {
+    if (!formData.paymentMode) {
+      toast("Validation Error", {
+        description: "Please select a payment mode",
+      });
+      return;
+    }
+
+    if (paymentMode === "upi" && !formData.paymentDetails?.upiId) {
       toast("Validation Error", {
         description: "Please enter UPI ID",
       });
@@ -150,9 +163,9 @@ const Page = () => {
 
     if (
       paymentMode === "bank" &&
-      (!formData.paymentDetails.bankName ||
-        !formData.paymentDetails.accountNumber ||
-        !formData.paymentDetails.ifscCode)
+      (!formData.paymentDetails?.bankName ||
+        !formData.paymentDetails?.accountNumber ||
+        !formData.paymentDetails?.ifscCode)
     ) {
       toast("Validation Error", {
         description: "Please enter all bank details",
@@ -160,56 +173,78 @@ const Page = () => {
       return;
     }
 
-    // Append all form fields except paymentDetails and images
+    // Append all form fields except images and payment details
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "images") {
-        // Append each image file separately
         if (Array.isArray(value)) {
-          value.forEach((file: File, index: number) => {
-            submitData.append(`images[${index}]`, file);
+          value.forEach((file: File) => {
+            submitData.append("images", file);
           });
         }
       } else if (key === "paymentDetails") {
-        Object.entries(value).forEach(([k, v]) => {
-          submitData.append(`paymentDetails[${k}]`, v as string);
-        });
+        // Handle payment details
+        if (value) {
+          Object.entries(value).forEach(([k, v]) => {
+            if (v) {
+              submitData.append(`paymentDetails.${k}`, v as string);
+            }
+          });
+        }
+      } else if (key === "paymentMode") {
+        // Don't append paymentMode here
+        // It will be handled separately below
       } else {
         submitData.append(key, value as string);
       }
     });
 
-    // Add additional fields
-    submitData.append("paymentMode", paymentMode);
+    // Add paymentMode as a single string value
+    submitData.append("paymentMode", formData.paymentMode);
     submitData.append("noShippingCharge", noShippingCharge.toString());
 
     // Log the FormData (for debugging)
-    const formDataObject = Object.fromEntries(submitData.entries());
-    console.log("Submitting data:", formDataObject);
+    const formDataEntries = Array.from(submitData.entries());
+    console.log("Submitting data:", formDataEntries);
 
-    const paymentDetailsValue = formDataObject.paymentDetails;
-    if (typeof paymentDetailsValue === "string") {
-      console.log("Payment Details:", JSON.parse(paymentDetailsValue));
+    try {
+      const result = await createProduct(submitData).unwrap();
+      if (result) {
+        toast.success("Product created successfully!");
+      }
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      toast.error("Failed to create product. Please try again.");
     }
-
-    // Add your API? call here
-    // Example:
-    // await fetch('/api/sell-book', {
-    //   method: 'POST',
-    //   body: submitData
-    // });
   };
 
   const handleValue = (value: string) => {
     setPaymentMode(value);
-    if (value === "upi") {
+    setFormData((prev) => ({
+      ...prev,
+      paymentMode: value,
+    }));
+    // Reset payment details based on payment mode
+    if (value === "UPI") {
       setFormData((prev) => ({
         ...prev,
-        upiId: "",
+        paymentMode: value,
+        paymentDetails: {
+          upiId: "",
+          bankName: "",
+          accountNumber: "",
+          ifscCode: "",
+        },
       }));
-    } else if (value === "bank") {
+    } else if (value === "Bank Account") {
       setFormData((prev) => ({
         ...prev,
-        bankName: "",
+        paymentMode: value,
+        paymentDetails: {
+          upiId: "",
+          bankName: "",
+          accountNumber: "",
+          ifscCode: "",
+        },
       }));
     }
   };
@@ -317,18 +352,18 @@ const Page = () => {
                 <div className='space-y-6'>
                   <div className='grid grid-cols-1 md:grid-cols-3 gap-4 items-center'>
                     <label
-                      htmlFor='bookName'
+                      htmlFor='title'
                       className='text-gray-700 font-medium dark:text-gray-200'
                     >
                       Book Title<span className='text-red-400'> *</span>
                     </label>
                     <input
                       type='text'
-                      name='bookName'
-                      id='bookName'
-                      value={formData.bookName}
+                      name='title'
+                      id='title'
+                      value={formData.title}
                       onChange={handleChange}
-                      placeholder='Enter Book Name'
+                      placeholder='Enter Book Title'
                       className='border border-gray-300 rounded-lg px-4 py-2 col-span-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition dark:bg-gray-800 dark:border-gray-600 dark:text-gray-50'
                       required
                     />
@@ -340,10 +375,10 @@ const Page = () => {
                     </label>
                     <div className='col-span-2'>
                       <Select
-                        name='bookType'
+                        name='category'
                         required
                         onValueChange={(value) =>
-                          setFormData((prev) => ({ ...prev, bookType: value }))
+                          setFormData((prev) => ({ ...prev, category: value }))
                         }
                       >
                         <SelectTrigger className='w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-50'>
@@ -622,16 +657,16 @@ const Page = () => {
                 <div className='space-y-6'>
                   <div className='grid grid-cols-1 md:grid-cols-3 gap-4 items-center'>
                     <label
-                      htmlFor='mrp'
+                      htmlFor='price'
                       className='text-gray-700 font-medium dark:text-gray-200'
                     >
                       MRP (₹)<span className='text-red-400'> *</span>
                     </label>
                     <input
                       type='number'
-                      name='mrp'
-                      id='mrp'
-                      value={formData.mrp}
+                      name='price'
+                      id='price'
+                      value={formData.price}
                       onChange={handleChange}
                       placeholder='Enter MRP'
                       className='border border-gray-300 rounded-lg px-4 py-2 col-span-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition dark:bg-gray-800 dark:border-gray-600 dark:text-gray-50'
@@ -640,16 +675,16 @@ const Page = () => {
                   </div>
                   <div className='grid grid-cols-1 md:grid-cols-3 gap-4 items-center'>
                     <label
-                      htmlFor='finalPrice'
+                      htmlFor='finalprice'
                       className='text-gray-700 font-medium dark:text-gray-200'
                     >
                       Final Price (₹)<span className='text-red-400'> *</span>
                     </label>
                     <input
                       type='number'
-                      name='finalPrice'
-                      id='finalPrice'
-                      value={formData.finalPrice}
+                      name='finalprice'
+                      id='finalprice'
+                      value={formData.finalprice}
                       onChange={handleChange}
                       placeholder='Enter Final Price'
                       className='border border-gray-300 rounded-lg px-4 py-2 col-span-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition dark:bg-gray-800 dark:border-gray-600 dark:text-gray-50'
@@ -734,7 +769,7 @@ const Page = () => {
                       >
                         <div className='flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-gray-200 hover:border-blue-400 transition dark:bg-gray-700 dark:border-gray-600 dark:hover:border-blue-400'>
                           <RadioGroupItem
-                            value='upi'
+                            value='UPI'
                             id='upi'
                             className='dark:bg-gray-700 dark:border-gray-600 dark:hover:border-blue-400'
                           />
@@ -742,7 +777,7 @@ const Page = () => {
                             htmlFor='upi'
                             className='text-sm font-medium cursor-pointer h-full dark:text-gray-50'
                           >
-                            Upi
+                            UPI
                           </label>
                         </div>
                         <div className='flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-gray-200 hover:border-blue-400 transition dark:bg-gray-700 dark:border-gray-600 dark:hover:border-blue-400'>
@@ -761,7 +796,7 @@ const Page = () => {
                       </RadioGroup>
                     </div>
                   </div>
-                  {paymentMode === "upi" && (
+                  {paymentMode === "UPI" && (
                     <div className='grid grid-cols-1 md:grid-cols-3 gap-4 items-center'>
                       <label
                         htmlFor='upiId'

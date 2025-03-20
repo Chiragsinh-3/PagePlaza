@@ -2,13 +2,17 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Head from "next/head";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
+
+  const user = useSelector((state: RootState) => state.user.user);
   const [profile, setProfile] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "(123) 456-7890",
+    name: user?.name || "John Doe",
+    email: user?.email || "john.doe@example.com",
+    phone: user?.phone || "(123) 456-7890",
   });
 
   interface Profile {
@@ -117,6 +121,8 @@ export default function ProfilePage() {
               <motion.input
                 whileFocus={{ scale: 1.01 }}
                 transition={{ type: "spring", stiffness: 300 }}
+                maxLength={10}
+                placeholder=' (123) 456-7890'
                 type='tel'
                 name='phone'
                 value={profile.phone}

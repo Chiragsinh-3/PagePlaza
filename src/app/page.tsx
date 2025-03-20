@@ -17,6 +17,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import NewBooks from "./components/NewBooks";
+import { useCartByUserIdQuery } from "@/store/api";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 export default function Home() {
   const bannerImages = [
@@ -98,11 +101,11 @@ export default function Home() {
       icon: <Truck className='h-8 w-8 text-primary ' />,
     },
   ];
-  const [currentImagge, setCurrentImage] = useState(0);
+  const [currentImage, setCurrentImage] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentImage((currentImagge) =>
-        currentImagge === bannerImages.length - 1 ? 0 : currentImagge + 1
+      setCurrentImage((currentImage) =>
+        currentImage === bannerImages.length - 1 ? 0 : currentImage + 1
       );
     }, 5000);
     return () => clearInterval(interval);
@@ -113,7 +116,7 @@ export default function Home() {
         {bannerImages.map((image, index) => (
           <div
             className={`absolute inset-0 transition-opacity duration-1000 ${
-              currentImagge === index ? "opacity-100" : "opacity-0"
+              currentImage === index ? "opacity-100" : "opacity-0"
             } `}
             key={index}
           >

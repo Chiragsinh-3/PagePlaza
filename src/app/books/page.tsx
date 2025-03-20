@@ -8,7 +8,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { books, filters } from "@/lib/BookData";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BookLoader from "@/lib/BookLoader";
 import { motion } from "framer-motion";
 import {
@@ -23,6 +23,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
+import { useGetAllProductsQuery } from "@/store/api";
 
 const page = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,6 +32,9 @@ const page = () => {
   const [category, setCategory] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState("newest");
   const [loading, isLoading] = useState(false);
+  const { data: products, isLoading: productsLoading } = useGetAllProductsQuery(
+    {}
+  );
   const bookperpage = 6;
 
   const toggleFilter = (section: string, item: string) => {
@@ -57,29 +61,32 @@ const page = () => {
     }
   };
 
-  const filterBooks = books.filter((book) => {
-    const conditionMatch =
-      condition.length === 0 ||
-      condition
-        .map((item) => item.toLowerCase())
-        .includes(book.condition.toLowerCase());
+  const filterBooks =
+    products?.data?.filter((book: any) => {
+      if (!products?.data) return [];
 
-    const typeMatch =
-      type.length === 0 ||
-      type
-        .map((item) => item.toLowerCase())
-        .includes(book.classType.toLowerCase());
+      const conditionMatch =
+        condition.length === 0 ||
+        condition
+          .map((item) => item.toLowerCase())
+          .includes(book.condition.toLowerCase());
 
-    const categoryMatch =
-      category.length === 0 ||
-      category
-        .map((item) => item.toLowerCase())
-        .includes(book.category.toLowerCase());
+      const typeMatch =
+        type.length === 0 ||
+        type
+          .map((item) => item.toLowerCase())
+          .includes(book.classType.toLowerCase());
 
-    return conditionMatch && typeMatch && categoryMatch;
-  });
+      const categoryMatch =
+        category.length === 0 ||
+        category
+          .map((item) => item.toLowerCase())
+          .includes(book.category.toLowerCase());
 
-  const sortedBooks = [...filterBooks].sort((a, b) => {
+      return conditionMatch && typeMatch && categoryMatch;
+    }) || [];
+
+  const sortedBooks = [...(filterBooks || [])].sort((a, b) => {
     switch (sortOption) {
       case "newest":
         return (
@@ -106,9 +113,9 @@ const page = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-  const calculateDiscount = (price: number, finalPrice: number): number => {
-    if (price > finalPrice && price > 0) {
-      return Math.round(((price - finalPrice) / price) * 100);
+  const calculateDiscount = (price: number, finalprice: number): number => {
+    if (price > finalprice && price > 0) {
+      return Math.round(((price - finalprice) / price) * 100);
     }
     return 0;
   };
@@ -228,7 +235,7 @@ const page = () => {
                                   <Badge className='rounded-l-none'>
                                     {calculateDiscount(
                                       book.price,
-                                      book.finalPrice
+                                      book.finalprice
                                     )}
                                     % off
                                   </Badge>
@@ -256,7 +263,7 @@ const page = () => {
 
                               <div className='flex items-baseline gap-2'>
                                 <span className='text-2xl font-bold'>
-                                  ₹{book.finalPrice}
+                                  ₹{book.finalprice}
                                 </span>
                                 {book.price && (
                                   <span className='line-through text-sm text-zinc-400'>
@@ -285,14 +292,14 @@ const page = () => {
           <button
             onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
-            className='mx-1 px-4 py-2 rounded-md bg-zinc-500 text-white disabled:opacity-50'
+            className='mx-1 px-4 py-2 rounded-md bg-zinc-500 text-white disabled:opacity-50 disabled:cursor-not-allowed'
           >
             {"<"}
           </button>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
               key={page}
-              className={`mx-1 px-4 py-2 rounded-md ${
+              className={`mx-1 px-4 py-2 rounded-md  ${
                 currentPage === page
                   ? " bg-gray-200 text-gray-700"
                   : "bg-zinc-500  text-white hover:bg-gray-300"
@@ -307,7 +314,7 @@ const page = () => {
               handlePageChange(Math.min(totalPages, currentPage + 1))
             }
             disabled={currentPage === totalPages || totalPages === 0}
-            className='mx-1 px-4 py-2 rounded-md bg-zinc-500 text-white disabled:opacity-50'
+            className='mx-1 px-4 py-2 rounded-md bg-zinc-500 text-white disabled:opacity-50 disabled:cursor-m'
           >
             {">"}
           </button>

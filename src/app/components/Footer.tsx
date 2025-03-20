@@ -22,7 +22,7 @@ const Footer = () => {
         transition={{ duration: 1.3 }}
         viewport={{ once: true }}
       >
-        <div className='bg-white dark:bg-black'>
+        {/* <div className='bg-white dark:bg-black'>
           <div className='border border-t-[1px] border-t-blue-100 dark:border-t-zinc-400  mb-[22px]' />
           <div className='border border-t-[2px] border-t-blue-100 dark:border-t-zinc-400  mb-[20px]' />
           <div className='border border-t-[3px] border-t-blue-100 dark:border-t-zinc-400  mb-[18px]' />
@@ -37,8 +37,8 @@ const Footer = () => {
           <div className='border border-t-[18px] border-t-blue-100 dark:border-t-zinc-400  mb-[3px]' />
           <div className='border border-t-[20px] border-t-blue-100 dark:border-t-zinc-400  mb-[1px]' />
           <div className='border border-t-[22px] border-t-blue-100 dark:border-t-zinc-400  mb-[0px]' />
-        </div>
-        <footer className='bg-gradient-to-b from-blue-100 to-white dark:bg-gradient-to-b dark:from-zinc-400 dark:to-slate-800 text-gray-900 dark:text-gray-50 font-sans   '>
+        </div> */}
+        <footer className='bg-gradient-to-b from-blue-100 to-white dark:bg-gradient-to-b dark:from-zinc-900 dark:to-zinc-800 text-gray-900 dark:text-gray-50 font-sans   '>
           <div className='container mx-auto px-4 py-12'>
             {/* top  */}
             <div className='grid gap-12 md:grid-cols-4 mb-3 px-8'>
@@ -202,11 +202,11 @@ const Footer = () => {
                       className='w-8'
                     />
                   </span>
-                  <span className='bg-white rounded-sm flex items-center border border-gray-500 px-1'>
+                  <span className='bg-white rounded-sm '>
                     <img
                       src='/icons/paytm.svg'
                       alt='Paytm Logo'
-                      className='w-5'
+                      className=' border border-slate-700 w-8 py-[5px] px-1 rounded-sm'
                     />
                   </span>
                 </div>

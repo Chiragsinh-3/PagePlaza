@@ -38,6 +38,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { toggleLoginDialog } from "@/store/slice/userSlice";
+import { useCartByUserIdQuery, useLogoutMutation } from "@/store/api";
 
 const Header = () => {
   const { darkMode, toggleDarkMode } = useTheme();
@@ -47,21 +48,21 @@ const Header = () => {
   const isLoginOpen = useSelector(
     (state: RootState) => state.user.isLoginDialogOpen
   );
+  const user = useSelector((state: RootState) => state.user.user);
+  const userId = user._id;
 
-  const user = {
-    profile: null,
-    name: null,
-    email: null,
-  };
-  const userPlaceholder = "null";
+  const { data: cartData } = useCartByUserIdQuery(userId);
+  // const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
 
+  const userPlaceholder = user?.name?.[0] || "?"; // Show first letter of name or "?" as fallback
+  const [logout] = useLogoutMutation();
   const handleLoginClick = () => {
     dispatch(toggleLoginDialog());
     setIsDropdownOpen(false);
   };
 
   const handleProtectionNavigation = (href: string) => {
-    if (user && user.email) {
+    if (user) {
       router.push(href);
       setIsDropdownOpen(false);
     } else {
@@ -70,10 +71,16 @@ const Header = () => {
     }
   };
   const handleLogout = () => {
+    logout({}).unwrap();
+    dispatch({ type: "user/logout" });
+    dispatch(toggleLoginDialog());
+    setIsDropdownOpen(false);
+    router.push("/");
+
     console.log("Logout clicked");
   };
   const menuItems = [
-    ...(user && user.email
+    ...(user
       ? [
           {
             href: "account/profile",
@@ -101,7 +108,9 @@ const Header = () => {
             onClick: handleLoginClick,
           },
         ]),
-    ...(user.email
+
+    // Protected menu items only shown when user exists
+    ...(user
       ? [
           {
             icon: <User className='h-5 w-5 text-gray-500 dark:text-gray-400' />,
@@ -140,6 +149,7 @@ const Header = () => {
         ]
       : []),
 
+    // Public menu items always shown
     {
       icon: <User2 className='h-5 w-5 text-gray-500 dark:text-gray-400' />,
       label: "About Us",
@@ -162,7 +172,9 @@ const Header = () => {
       label: "Help",
       href: "/how-it-works",
     },
-    ...(user.email
+
+    // Logout option only shown when user exists
+    ...(user
       ? [
           {
             icon: (
@@ -319,7 +331,7 @@ const Header = () => {
 
             {/* Cart */}
             <div className='hidden items-center gap-6 text-sm font-medium md:flex'>
-              <Link href='/checkout/cart'>
+              <Link href='/account/cart'>
                 <div className='relative'>
                   <Button variant='ghost' className='relative'>
                     <ShoppingCart className='h-5 w-5 mr-2 lg:mr-0 text-gray-500 dark:text-gray-400' />
@@ -327,7 +339,7 @@ const Header = () => {
                   </Button>
                   {user && (
                     <span className='absolute top-2 left-5 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white rounded-full w-3 h-3 text-[10px] flex items-center justify-center'>
-                      3
+                      {cartData?.data?.cart?.items?.length}
                     </span>
                   )}
                 </div>

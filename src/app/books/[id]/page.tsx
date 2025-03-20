@@ -14,32 +14,48 @@ import {
   FiPhone,
   FiCheckCircle,
 } from "react-icons/fi";
+import {
+  useAddToCartMutation,
+  useAddToWishlistMutation,
+  useProductByIdQuery,
+  useWishlistDeleteMutation,
+} from "@/store/api";
+import toast from "react-hot-toast";
+
+interface Seller {
+  name: string;
+  contact: string;
+  addresses?: string[];
+  phoneNumber?: string;
+}
+
+interface DiscountCalculation {
+  price: number;
+  finalPrice: number;
+}
 
 export default function BookDetail() {
   const params = useParams();
   const id = params.id;
+  console.log(id);
   const [book, setBook] = useState<(typeof books)[0] | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
-
+  const [addToWishlist] = useAddToWishlistMutation();
+  const [wishlistDelete] = useWishlistDeleteMutation();
+  const [addToCart] = useAddToCartMutation();
+  const { data: productData } = useProductByIdQuery(id);
   useEffect(() => {
     if (id) {
-      // In a real app, this would be an API call
-      const foundBook = books.find((b) => b._id === id) || null;
-      setBook(foundBook);
+      setBook(productData?.data || null);
       setLoading(false);
     }
-  }, [id]);
+  }, [id, productData]);
   const handleAddToCart = () => {
-    // Implement your add to cart logic here
+    if (book) {
+      addToCart({ productId: book._id, quantity: 1 });
+    }
   };
-  if (loading) {
-    return (
-      <div className='min-h-screen flex items-center justify-center'>
-        <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500'></div>
-      </div>
-    );
-  }
 
   if (!book) {
     return (
@@ -56,11 +72,6 @@ export default function BookDetail() {
     );
   }
 
-  interface DiscountCalculation {
-    price: number;
-    finalPrice: number;
-  }
-
   const calculateDiscount = ({
     price,
     finalPrice,
@@ -71,8 +82,22 @@ export default function BookDetail() {
     return 0;
   };
   // Placeholder images since the provided data doesn't have real images
-  const placeholderImages = ["/sepiens1.jpg", "/sepiens2.jpg"];
-
+  // const placeholderImages = ["/sepiens1.jpg", "/sepiens2.jpg"];
+  const handleFavorites = async () => {
+    try {
+      if (!book.inWishlist) {
+        await addToWishlist({ productId: book._id });
+        setBook({ ...book, inWishlist: !book.inWishlist });
+        toast.success("Added to favorites");
+      } else {
+        await wishlistDelete({ productId: book._id });
+        setBook({ ...book, inWishlist: !book.inWishlist });
+        toast.success("Removed from favorites");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <Head>
@@ -118,14 +143,18 @@ export default function BookDetail() {
               >
                 {calculateDiscount({
                   price: book.price,
-                  finalPrice: book.finalPrice,
-                }) && (
-                  <div className='absolute top-4 left-4 bg-red-500 text-white px-2 py-1 text-sm font-bold rounded'>
-                    25% Off
+                  finalPrice: book.finalprice,
+                }) > 0 && (
+                  <div className='absolute top-5 left-0 bg-red-600 text-white px-2 py-1 rounded-r-md'>
+                    {calculateDiscount({
+                      price: book.price,
+                      finalPrice: book.finalprice,
+                    })}
+                    % off
                   </div>
                 )}
                 <img
-                  src={placeholderImages[selectedImage]}
+                  src={book.images[selectedImage]}
                   alt={book.title}
                   className=' h-full object-cover'
                 />
@@ -137,7 +166,7 @@ export default function BookDetail() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className='flex space-x-2 overflow-x-auto pb-2'
               >
-                {placeholderImages.map((img, index) => (
+                {book.images.map((img, index) => (
                   <div
                     key={index}
                     className={`cursor-pointer border-2 rounded-md overflow-hidden ${
@@ -173,7 +202,7 @@ export default function BookDetail() {
 
               <div className='flex items-end space-x-4'>
                 <div className='text-3xl font-bold dark:text-white'>
-                  ₹{book.finalPrice}
+                  ₹{book.finalprice}
                 </div>
                 <div className='text-xl text-gray-500 line-through dark:text-gray-400'>
                   ₹{book.price}
@@ -189,7 +218,7 @@ export default function BookDetail() {
                 onClick={handleAddToCart}
               >
                 <FiShoppingCart />
-                <span>Buy Now</span>
+                <span>Add to Cart</span>
               </motion.button>
 
               <div className='flex space-x-4'>
@@ -197,6 +226,17 @@ export default function BookDetail() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className='flex items-center space-x-2 text-gray-600 dark:text-gray-400'
+                  onClick={async () => {
+                    try {
+                      await navigator.share({
+                        title: book.title,
+                        text: book.description,
+                        url: window.location.href,
+                      });
+                    } catch (error) {
+                      console.log("Error sharing:", error);
+                    }
+                  }}
                 >
                   <FiShare2 />
                   <span>Share</span>
@@ -205,8 +245,12 @@ export default function BookDetail() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className='flex items-center space-x-2 text-gray-600 dark:text-gray-400'
+                  onClick={handleFavorites}
                 >
-                  <FiHeart />
+                  <FiHeart
+                    fill={book.inWishlist ? "red" : ""}
+                    className={book.inWishlist ? "text-red-500" : ""}
+                  />
                   <span>Add</span>
                 </motion.button>
               </div>
@@ -300,19 +344,21 @@ export default function BookDetail() {
               </div>
               <div>
                 <div className='font-bold flex items-center dark:text-white'>
-                  Virat Kohli
+                  {book.seller?.name}
                   <span className='ml-2 text-green-600 flex items-center text-sm font-normal dark:text-green-400'>
                     <FiCheckCircle className='mr-1' /> Verified
                   </span>
                 </div>
                 <div className='text-gray-600 flex items-center mt-1 dark:text-gray-400'>
-                  <FiMapPin className='mr-1' /> Mirzapur, UP
+                  <FiMapPin className='mr-1' />{" "}
+                  {book.seller?.addresses?.[0] || "India"}
                 </div>
               </div>
             </div>
             <div className='mt-4 border-t border-gray-200 pt-4 dark:border-gray-700'>
               <div className='flex items-center text-gray-600 dark:text-gray-400'>
-                <FiPhone className='mr-2' /> Contact: 07007263566
+                <FiPhone className='mr-2' /> Contact:{" "}
+                {book.seller?.phoneNumber || "Not available"}
               </div>
             </div>
           </motion.div>

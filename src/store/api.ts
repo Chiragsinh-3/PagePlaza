@@ -72,7 +72,7 @@ export const api = createApi({
     logout: builder.mutation({
       query: () => ({
         url: API_URLS.LOGOUT,
-        method: "POST",
+        method: "GET",
       }),
       invalidatesTags: ["User"],
     }),
@@ -106,11 +106,18 @@ export const api = createApi({
     }),
 
     // Product Endpoints
-    products: builder.query({
-      query: (params) => ({
+    createProducts: builder.mutation({
+      query: (body) => ({
+        url: API_URLS.PRODUCTS,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Product"],
+    }),
+    getAllProducts: builder.query({
+      query: () => ({
         url: API_URLS.PRODUCTS,
         method: "GET",
-        params,
       }),
       providesTags: ["Product"],
     }),
@@ -152,6 +159,13 @@ export const api = createApi({
         body,
       }),
       invalidatesTags: ["Cart"],
+    }),
+    removeFromCart: builder.mutation<any, string>({
+      query: (productId) => ({
+        url: "/cart/delete", // or '/cart/delete-item' (verify correct endpoint with backend)
+        method: "DELETE",
+        body: { productId },
+      }),
     }),
     cartByUserId: builder.query({
       query: (userId) => ({
@@ -239,13 +253,15 @@ export const {
   useVerifyAuthMutation,
   useUpdateUserProfileMutation,
 
-  useProductsQuery,
+  useCreateProductsMutation,
+  useGetAllProductsQuery,
   useProductByIdQuery,
   useProductDeleteMutation,
   useProductBySellerIdQuery,
 
   useAddToCartMutation,
   useCartDeleteMutation,
+  useRemoveFromCartMutation,
   useCartByUserIdQuery,
 
   useAddToWishlistMutation,
