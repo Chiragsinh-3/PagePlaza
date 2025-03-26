@@ -11,6 +11,9 @@ const API_URLS = {
   RESET_PASSWORD: (token: string) => `${BASE_URL}/auth/reset-password/${token}`,
   VERIFY_AUTH: `${BASE_URL}/auth/verify-auth`,
   UPDATE_USER_PROFILE: `${BASE_URL}/user/update-user-details`,
+  DELETE_USER: `${BASE_URL}/auth/delete-user`,
+  GOOGLE_LOGIN: `${BASE_URL}/auth/google`,
+  GOOGLE_CALLBACK: `${BASE_URL}/auth/google/callback`,
 
   // Product Apis
   PRODUCTS: `${BASE_URL}/product`,
@@ -37,12 +40,18 @@ const API_URLS = {
   // Order Apis
   ORDER: `${BASE_URL}/order`,
   ORDER_BY_ID: (orderId: string) => `${BASE_URL}/order/${orderId}`,
+  CREATE_RAZORPAY_ORDER: `${BASE_URL}/order/create-razorpay-order`,
+  VERIFY_PAYMENT: `${BASE_URL}/order/verify-payment`,
 };
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
     credentials: "include",
+    prepareHeaders: (headers) => {
+      headers.set("Accept", "application/json");
+      return headers;
+    },
   }),
   tagTypes: ["User", "Product", "Cart", "Wishlist", "Address", "Order"],
   endpoints: (builder) => ({
@@ -104,6 +113,26 @@ export const api = createApi({
       }),
       invalidatesTags: ["User"],
     }),
+    deleteUser: builder.mutation({
+      query: (body) => ({
+        url: API_URLS.DELETE_USER,
+        method: "DELETE",
+        body,
+      }),
+      invalidatesTags: ["User"],
+    }),
+    // googleLogin: builder.mutation({
+    //   query: () => ({
+    //     url: API_URLS.GOOGLE_LOGIN,
+    //     method: "GET",
+    //   }),
+    // }),
+    // googleCallback: builder.mutation({
+    //   query: () => ({
+    //     url: API_URLS.GOOGLE_CALLBACK,
+    //     method: "GET",
+    //   }),
+    // }),
 
     // Product Endpoints
     createProducts: builder.mutation({
@@ -240,6 +269,20 @@ export const api = createApi({
       }),
       providesTags: ["Order"],
     }),
+    createRazorpayOrder: builder.mutation({
+      query: (body) => ({
+        url: API_URLS.CREATE_RAZORPAY_ORDER,
+        method: "POST",
+        body,
+      }),
+    }),
+    verifyPayment: builder.mutation({
+      query: (body) => ({
+        url: API_URLS.VERIFY_PAYMENT,
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -252,6 +295,7 @@ export const {
   useResetPasswordMutation,
   useVerifyAuthMutation,
   useUpdateUserProfileMutation,
+  useDeleteUserMutation,
 
   useCreateProductsMutation,
   useGetAllProductsQuery,
@@ -274,4 +318,6 @@ export const {
   useCreateOrUpdateOrderMutation,
   useGetOrderByUserQuery,
   useGetOrderByOrderIdQuery,
+  useCreateRazorpayOrderMutation,
+  useVerifyPaymentMutation,
 } = api;

@@ -33,12 +33,14 @@ import {
   Sun,
   User,
   User2,
+  XIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { toggleLoginDialog } from "@/store/slice/userSlice";
 import { useCartByUserIdQuery, useLogoutMutation } from "@/store/api";
+import Image from "next/image";
 
 const Header = () => {
   const { darkMode, toggleDarkMode } = useTheme();
@@ -49,12 +51,13 @@ const Header = () => {
     (state: RootState) => state.user.isLoginDialogOpen
   );
   const user = useSelector((state: RootState) => state.user.user);
-  const userId = user._id;
+  // console.log(user.profilePicture);
+  const userId = user?._id;
 
   const { data: cartData } = useCartByUserIdQuery(userId);
   // const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
 
-  const userPlaceholder = user?.name?.[0] || "?"; // Show first letter of name or "?" as fallback
+  const userPlaceholder = user?.name?.[0] || <User />;
   const [logout] = useLogoutMutation();
   const handleLoginClick = () => {
     dispatch(toggleLoginDialog());
@@ -85,14 +88,18 @@ const Header = () => {
           {
             href: "account/profile",
             content: (
-              <div className='flex space-x-4 items-center p-2 '>
-                <Avatar className='w-12 h-12 -ml-2 rounded-full'>
-                  {user?.profile ? (
-                    <AvatarImage alt='user_image' />
-                  ) : (
-                    <AvatarFallback>{userPlaceholder}</AvatarFallback>
-                  )}
-                </Avatar>
+              <div className='flex space-x-4 items-center p-2'>
+                {user?.profilePicture ? (
+                  <Image
+                    width={50}
+                    height={50}
+                    className='w-12 h-12 -ml-2 rounded-full'
+                    alt='user_image'
+                    src={user.profilePicture}
+                  />
+                ) : (
+                  <User className='w-12 h-12 -ml-2' />
+                )}
                 <div className='flex flex-col'>
                   <span className='font-semibold text-md'>{user.name}</span>
                   <span className='text-gray-500 text-xs'>{user.email}</span>
@@ -167,11 +174,6 @@ const Header = () => {
       label: "Privacy Policy",
       href: "/privacy-policy",
     },
-    {
-      icon: <HelpCircle className='h-5 w-5 text-gray-500 dark:text-gray-400' />,
-      label: "Help",
-      href: "/how-it-works",
-    },
 
     // Logout option only shown when user exists
     ...(user
@@ -197,7 +199,7 @@ const Header = () => {
               href={item.href}
               className={`flex items-center ${
                 item.content ? "gap-0 border-b py-1 mb-4" : "gap-4"
-              } px-4 py-3 text-sm rounded-lg  hover:bg-gray-200 hover:dark:bg-gray-800`}
+              } px-4 py-3 text-sm rounded-lg  hover:bg-gray-200 hover:dark:bg-[rgb(28,18,43)]`}
               prefetch={false}
               onClick={() => {
                 setIsDropdownOpen(false);
@@ -211,9 +213,10 @@ const Header = () => {
           ) : (
             <button
               key={index}
-              className='flex w-full items-center gap-4 px-4 py-3 text-sm rounded-lg hover:bg-gray-200 hover:dark:bg-gray-800'
+              className='flex w-full items-center gap-4 px-4 py-3 text-sm rounded-lg hover:bg-gray-200 hover:dark:bg-[rgb(28,18,43)]'
               onClick={item.onClick}
             >
+              {/* "bg-gradient-to-b from-[rgb(252,247,255)]  to-white dark:bg-gradient-to-b dark:from-[rgb(28,18,43)] dark:via-[rgb(10,6,15)] dark:to-black" */}
               {item.icon && item.icon}
               <span>{item.label}</span>
               <ChevronRight className='w-4 h-4 ml-auto' />
@@ -225,7 +228,7 @@ const Header = () => {
   };
 
   return (
-    <header className='sticky top-0 z-50 py-4 w-full border-b bg-slate-100/45 text-black dark:text-white dark:border-gray-800 dark:bg-black/45 backdrop-blur-md'>
+    <header className='sticky top-0 z-50 py-4 w-full border-b bg-slate-100/45 text-black dark:text-white dark:border-[rgb(28,18,43)] dark:bg-black/45 backdrop-blur-md'>
       <div className='container mx-auto flex h-[5vh] max-w-6xl items-center justify-center md:px-6'>
         <AuthPage
           isLoginOpen={isLoginOpen}
@@ -233,7 +236,7 @@ const Header = () => {
         />
 
         <div className='container mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6'>
-          <Link href='/' className='flex items-center gap-2 ' prefetch={false}>
+          <Link href='/' className='flex items-center gap-2 '>
             <p className='sm:font-semibold mr-2 text-xs sm:text-sm font-light'>
               PAGE PLAZA
             </p>
@@ -301,26 +304,25 @@ const Header = () => {
             </div>
 
             {/* Profile DropdownMenu */}
-            <div className='hidden items-center gap-6 text-sm font-medium md:flex'>
+            <div className='hidden  items-center gap-6 text-sm font-medium md:flex'>
               <DropdownMenu
                 open={isDropdownOpen}
                 onOpenChange={setIsDropdownOpen}
               >
                 <DropdownMenuTrigger asChild>
-                  <Button variant='ghost'>
-                    <Avatar className='w-8 h-8 rounded-full'>
-                      {user?.profile ? (
-                        <AvatarImage alt='user_image' />
-                      ) : userPlaceholder ? (
-                        <AvatarFallback className=''>
-                          {userPlaceholder}
-                        </AvatarFallback>
-                      ) : (
-                        <User className='ml-2 mt-2' />
-                      )}
-                    </Avatar>
-
-                    <span className='hidden lg:block'>My Account</span>
+                  <Button variant='ghost' className='lg:flex hidden'>
+                    {user?.profilePicture ? (
+                      <Image
+                        width={50}
+                        height={50}
+                        className='w-6 h-6 rounded-full ml-1'
+                        alt='user_image'
+                        src={user.profilePicture}
+                      />
+                    ) : (
+                      <User className='' />
+                    )}
+                    <span className='hidden mr-1 lg:block'>My Account</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className='w-[300px] p-4'>
@@ -368,29 +370,57 @@ const Header = () => {
               <Button
                 variant='ghost'
                 size='icon'
-                className='rounded-full md:hidden'
+                className='rounded-full lg:hidden' // Changed from md:hidden to lg:hidden
               >
                 <MenuIcon className='h-5 w-5 text-gray-500 dark:text-gray-400' />
                 <span className='sr-only'>Toggle navigation menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side='left' className='md:hidden'>
-              <SheetDescription className='sr-only'>
-                Description goes here
-              </SheetDescription>
+            <SheetContent
+              side='left'
+              className='w-[280px] sm:w-[350px] p-0' // Remove default padding and set consistent width
+            >
+              <div className='flex flex-col h-full'>
+                {/* Header section */}
+                <div className='flex items-center justify-between p-4 border-b dark:border-gray-800'>
+                  <Link
+                    href='/'
+                    className='flex items-center gap-2'
+                    prefetch={false}
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    <p className='text-lg font-semibold'>PAGE PLAZA</p>
+                  </Link>
+                </div>
 
-              <div className='grid gap-4 p-4'>
-                <Link
-                  href='/'
-                  className='flex items-center gap-2 ml-4'
-                  prefetch={false}
-                  onClick={() => setIsDropdownOpen(false)}
-                >
-                  <p className='font-semibold mr-2 sm:text-base sm:font-normal'>
-                    PAGE PLAZA
-                  </p>
-                </Link>
-                <MenuItems />
+                {/* Search section for mobile */}
+                <div className='p-4 border-b dark:border-gray-800'>
+                  <div className='relative'>
+                    <SearchIcon className='absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400' />
+                    <Input
+                      type='search'
+                      placeholder='Book Name / Author / Subject / Publisher'
+                      className='pl-8 w-full'
+                    />
+                  </div>
+                </div>
+
+                {/* Menu items scrollable section */}
+                <div className='flex-grow overflow-y-auto'>
+                  <MenuItems classname='py-2' />
+                </div>
+
+                {/* Bottom section for Sell Used Books */}
+                <div className='p-4 border-t dark:border-gray-800'>
+                  <Link href='/book-sell' className='w-full'>
+                    <Button
+                      variant='outline'
+                      className='w-full bg-slate-400/5 text-sm'
+                    >
+                      Sell Used Books
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </SheetContent>
           </Sheet>

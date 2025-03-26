@@ -22,6 +22,8 @@ import { setUser, authStatus } from "@/store/slice/userSlice";
 import { toast } from "sonner";
 import { validateForm, ValidationErrors } from "@/utils/validation";
 
+import Cookies from "js-cookie";
+
 interface AuthPageProps {
   isLoginOpen: boolean;
   setIsLoginOpen: (open: boolean) => void;
@@ -42,6 +44,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLoginOpen, setIsLoginOpen }) => {
   const [register] = useRegisterMutation();
   const [login] = useLoginMutation();
   const [forgotPassword] = useForgotPasswordMutation();
+  // const [googleLogin] = useGoogleLoginMutation();
+  // const [googleCallback] = useGoogleCallbackMutation();
   const dispatch = useDispatch();
 
   const handleTabChange = (value: string) => {
@@ -126,6 +130,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLoginOpen, setIsLoginOpen }) => {
     try {
       const result = await login(loginForm).unwrap();
       console.log(result);
+      Cookies.set("accessToken", result.data.accesstoken);
+
       if (result.success) {
         toast.success("Login successful!");
       }
@@ -202,6 +208,11 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLoginOpen, setIsLoginOpen }) => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    const backendUrl = "http://localhost:8000/api";
+    window.location.href = `${backendUrl}/auth/google`;
+  };
+
   return (
     <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
       <motion.div
@@ -249,7 +260,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLoginOpen, setIsLoginOpen }) => {
                   whileTap={{ scale: 0.95 }}
                   className='w-full flex items-center justify-center gap-2 border-2 py-2 rounded-lg text-sm hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800/50'
                   onClick={() => {
-                    /* Add Google sign-in logic */
+                    handleGoogleLogin();
                   }}
                 >
                   <svg className='w-5 h-5' viewBox='0 0 24 24'>
@@ -383,7 +394,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLoginOpen, setIsLoginOpen }) => {
                   variant='outline'
                   className='w-full flex items-center justify-center gap-2 border-2 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800/50'
                   onClick={() => {
-                    /* Add Google sign-in logic */
+                    handleGoogleLogin();
                   }}
                 >
                   <svg className='w-5 h-5' viewBox='0 0 24 24'>

@@ -17,9 +17,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import NewBooks from "./components/NewBooks";
-import { useCartByUserIdQuery } from "@/store/api";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
+import { useLogoutMutation, useVerifyAuthMutation } from "@/store/api";
+import { useDispatch } from "react-redux";
 
 export default function Home() {
   const bannerImages = [
@@ -102,7 +101,20 @@ export default function Home() {
     },
   ];
   const [currentImage, setCurrentImage] = useState(0);
+  // const token = Cookies.get("accessToken");
+  // console.log(token);
+  const [verifyAuth] = useVerifyAuthMutation();
+
+  const [logout] = useLogoutMutation();
+  const dispatch = useDispatch();
   useEffect(() => {
+    const checkUser = verifyAuth({}).unwrap();
+    if (!checkUser) {
+      logout({}).unwrap();
+      dispatch({ type: "user/logout" });
+    } else {
+      dispatch({ type: "user/login" });
+    }
     const interval = setInterval(() => {
       setCurrentImage((currentImage) =>
         currentImage === bannerImages.length - 1 ? 0 : currentImage + 1

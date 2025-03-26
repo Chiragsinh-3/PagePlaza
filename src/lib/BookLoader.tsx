@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles/BookLoader.css"; // Make sure the path is correct for your project
+import "./styles/bookLoader.css"; // Make sure the path is correct for your project
 
 const BookLoader = () => {
   return (

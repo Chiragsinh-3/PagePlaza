@@ -22,8 +22,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart } from "lucide-react";
-import { useGetAllProductsQuery } from "@/store/api";
+import { Book, Heart } from "lucide-react";
+import {
+  useAddToWishlistMutation,
+  useGetAllProductsQuery,
+  useWishlistDeleteMutation,
+} from "@/store/api";
+import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { toast } from "sonner";
 
 const page = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,9 +40,22 @@ const page = () => {
   const [category, setCategory] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState("newest");
   const [loading, isLoading] = useState(false);
-  const { data: products, isLoading: productsLoading } = useGetAllProductsQuery(
-    {}
-  );
+  const { data: products, refetch } = useGetAllProductsQuery({});
+  const [addToWishlist] = useAddToWishlistMutation();
+  const router = useRouter();
+  const user = useSelector((state: RootState) => state.user.user);
+  const id = user?._id;
+
+  useEffect(() => {
+    refetch();
+    router.refresh();
+  }, []);
+  useEffect(() => {
+    refetch();
+    router.refresh();
+  }, [id]);
+  const [wishlistDelete] = useWishlistDeleteMutation();
+
   const bookperpage = 6;
 
   const toggleFilter = (section: string, item: string) => {
@@ -128,16 +149,24 @@ const page = () => {
     };
     return date.toLocaleDateString(undefined, options);
   };
+
   return (
     <div className='min-h-screen '>
       <div className='container mx-auto px-4 py-4'>
-        <nav className='mb-8 flex items-center'>
-          <Link href='/' className='text-primary hover:underline'>
-            {" "}
-            Home{" "}
+        <nav className='mb-8 flex items-center space-x-2 text-sm'>
+          {/* Breadcrumb Navigation */}
+
+          <Link href='/'>
+            <div className='hover:text-[rgb(142,9,219)] dark:hover:text-[rgb(228,205,255)]'>
+              Home
+            </div>
           </Link>
           <span>/</span>
-          <span> Books</span>
+          <Link href='/books'>
+            <div className='hover:text-[rgb(142,9,219)] dark:hover:text-[rgb(228,205,255)]'>
+              Books
+            </div>
+          </Link>
         </nav>
         <h1 className='mb-8 text-3xl'>
           Find from over 1000s of used books online
@@ -241,14 +270,6 @@ const page = () => {
                                   </Badge>
                                 )}
                               </div>
-                              <Button
-                                size='icon'
-                                variant={"ghost"}
-                                className='absolute right-2 top-2 h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm transition-opacity duration-300
-                               hover:bg-white group-hover:opacity-100'
-                              >
-                                <Heart className='text-red-500 h-4 w-4' />
-                              </Button>
                             </div>
                             <div className='p-4 pt-10 space-y-2'>
                               <div className='flex items-start justify-between'>
@@ -284,41 +305,72 @@ const page = () => {
                 </div>
               </>
             ) : (
-              <></>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className='flex flex-col items-center justify-center py-12 text-center'
+              >
+                <div className='mb-4 rounded-full '>
+                  <Book className='w-8 h-8 text-gray-500 dark:text-gray-400' />
+                </div>
+                <h3 className='text-xl font-semibold mb-2'>No Books Found</h3>
+                <p className='text-gray-500 dark:text-gray-400 mb-6'>
+                  {condition.length || type.length || category.length
+                    ? "No books match your selected filters. Try adjusting your filters."
+                    : "There are no books available at the moment."}
+                </p>
+                {condition.length || type.length || category.length ? (
+                  <Button
+                    variant='outline'
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCondition([]);
+                      setType([]);
+                      setCategory([]);
+                    }}
+                    className='hover:bg-gray-100 dark:hover:bg-gray-800'
+                  >
+                    Clear All Filters
+                  </Button>
+                ) : null}
+              </motion.div>
             )}
           </div>
         </div>
-        <div className='flex justify-center mt-8'>
-          <button
-            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-            className='mx-1 px-4 py-2 rounded-md bg-zinc-500 text-white disabled:opacity-50 disabled:cursor-not-allowed'
-          >
-            {"<"}
-          </button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className='flex justify-center mt-8'>
             <button
-              key={page}
-              className={`mx-1 px-4 py-2 rounded-md  ${
-                currentPage === page
-                  ? " bg-gray-200 text-gray-700"
-                  : "bg-zinc-500  text-white hover:bg-gray-300"
-              }`}
-              onClick={() => handlePageChange(page)}
+              onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className='mx-1 px-4 py-2 rounded-md bg-zinc-500 text-white disabled:opacity-50 disabled:cursor-not-allowed'
             >
-              {page}
+              {"<"}
             </button>
-          ))}
-          <button
-            onClick={() =>
-              handlePageChange(Math.min(totalPages, currentPage + 1))
-            }
-            disabled={currentPage === totalPages || totalPages === 0}
-            className='mx-1 px-4 py-2 rounded-md bg-zinc-500 text-white disabled:opacity-50 disabled:cursor-m'
-          >
-            {">"}
-          </button>
-        </div>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                className={`mx-1 px-4 py-2 rounded-md  ${
+                  currentPage === page
+                    ? " bg-gray-200 text-gray-700"
+                    : "bg-zinc-500  text-white hover:bg-gray-300"
+                }`}
+                onClick={() => handlePageChange(page)}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() =>
+                handlePageChange(Math.min(totalPages, currentPage + 1))
+              }
+              disabled={currentPage === totalPages || totalPages === 0}
+              className='mx-1 px-4 py-2 rounded-md bg-zinc-500 text-white disabled:opacity-50 disabled:cursor-m'
+            >
+              {">"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -38,6 +38,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useCreateProductsMutation } from "@/store/api";
+import { useRouter } from "next/navigation";
 
 const OptionalDetails: { [key: string]: string[] } = {
   BookInformation: ["Author", "Edition (Year)", "Description"],
@@ -47,22 +48,21 @@ const Page = () => {
   const [addFile, removeFile] = useFileSelection();
   const [noShippingCharge, setNoShippingCharge] = React.useState(false);
   const [paymentMode, setPaymentMode] = React.useState<string>("");
-
+  const router = useRouter();
   const [createProduct] = useCreateProductsMutation();
   const [formData, setFormData] = React.useState({
-    title: "Mathematics NCERT",
-    category: "School",
-    condition: "Good",
-    classType: "Class 10",
-    subject: "Mathematics",
-    author: "RD Sharma",
-    price: "599",
-    edition: "2023",
-    description:
-      "A comprehensive mathematics textbook for class 10 students following NCERT curriculum. The book is in good condition with no markings or torn pages.",
-    finalprice: "399",
-    shippingCharge: "50",
-    paymentMode: "", // Keep this as string
+    title: "",
+    category: "",
+    condition: "",
+    classType: "",
+    // subject: "",
+    author: "",
+    price: "",
+    edition: "",
+    description: "",
+    finalprice: "",
+    shippingCharge: "",
+    paymentMode: "",
     paymentDetails: {
       upiId: "",
       bankName: "",
@@ -135,11 +135,12 @@ const Page = () => {
       !formData.category ||
       !formData.condition ||
       !formData.classType ||
-      !formData.subject ||
+      // !formData.subject ||
       !formData.price ||
       !formData.finalprice ||
       (!formData.shippingCharge && !noShippingCharge)
     ) {
+      console.log(formData);
       toast("Validation Error", {
         description: "Please fill in all required fields",
       });
@@ -209,6 +210,7 @@ const Page = () => {
     try {
       const result = await createProduct(submitData).unwrap();
       if (result) {
+        router.push("/account/selling-products");
         toast.success("Product created successfully!");
       }
     } catch (error) {
@@ -381,10 +383,18 @@ const Page = () => {
                           setFormData((prev) => ({ ...prev, category: value }))
                         }
                       >
-                        <SelectTrigger className='w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-50'>
+                        <SelectTrigger
+                          className='w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-50'
+                          aria-label='Select book type'
+                        >
                           <SelectValue placeholder='Please Select Book Type' />
                         </SelectTrigger>
-                        <SelectContent className='dark:bg-gray-800 dark:border-gray-600 dark:text-gray-50'>
+                        <SelectContent
+                          className='dark:bg-gray-800 dark:border-gray-600 dark:text-gray-50'
+                          position='popper'
+                          sideOffset={4}
+                          align='start'
+                        >
                           {filters.category.map((book) => (
                             <SelectItem
                               key={book}
@@ -521,6 +531,11 @@ const Page = () => {
                                     src={URL.createObjectURL(file)}
                                     alt={`Preview ${index}`}
                                     className='w-full h-32 object-cover rounded-lg transition-transform duration-300'
+                                    loading={index === 0 ? "eager" : "lazy"}
+                                    decoding='async'
+                                    fetchPriority={
+                                      index === 0 ? "high" : "auto"
+                                    }
                                   />
                                   <button
                                     onClick={(e) => handlePreviewClick(e, file)}
@@ -592,15 +607,18 @@ const Page = () => {
                                 className='grid grid-cols-1 md:grid-cols-3 gap-4 items-baseline '
                               >
                                 <label
-                                  htmlFor={optionValue}
-                                  className='ml-2 text-base font-medium  leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-gray-200'
+                                  htmlFor={optionValue.toLowerCase()}
+                                  className='ml-2 text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-gray-200'
                                 >
                                   {optionValue}
                                 </label>
                                 {optionValue === "Description" ? (
                                   <textarea
-                                    name={optionValue}
-                                    id={optionValue}
+                                    name='description'
+                                    id={optionValue
+                                      .toLowerCase()
+                                      .replace(/[()]/g, "")
+                                      .replace(/\s+/g, "")}
                                     value={formData.description}
                                     onChange={handleChange}
                                     placeholder={`Enter ${optionValue}`}
@@ -609,20 +627,19 @@ const Page = () => {
                                 ) : (
                                   <input
                                     type='text'
-                                    name={optionValue}
-                                    id={optionValue}
+                                    name={
+                                      optionValue === "Author"
+                                        ? "author"
+                                        : optionValue === "Edition (Year)"
+                                        ? "edition"
+                                        : optionValue.toLowerCase()
+                                    }
+                                    id={optionValue.toLowerCase()}
                                     value={
-                                      typeof formData[
-                                        optionValue.toLowerCase() as keyof typeof formData
-                                      ] === "string" ||
-                                      typeof formData[
-                                        optionValue.toLowerCase() as keyof typeof formData
-                                      ] === "number"
-                                        ? String(
-                                            formData[
-                                              optionValue.toLowerCase() as keyof typeof formData
-                                            ]
-                                          )
+                                      optionValue === "Author"
+                                        ? formData.author
+                                        : optionValue === "Edition (Year)"
+                                        ? formData.edition
                                         : ""
                                     }
                                     onChange={handleChange}
