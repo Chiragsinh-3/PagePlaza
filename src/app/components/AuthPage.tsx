@@ -209,8 +209,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLoginOpen, setIsLoginOpen }) => {
   };
 
   const handleGoogleLogin = () => {
-    const backendUrl = "http://localhost:8000/api";
-    window.location.href = `${backendUrl}/auth/google`;
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
   };
 
   return (

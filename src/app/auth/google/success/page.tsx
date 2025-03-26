@@ -15,7 +15,7 @@ export default function GoogleAuthSuccess() {
       try {
         // Call your verify-auth endpoint to get user data
         const response = await fetch(
-          `http://localhost:8000/api/auth/verify-auth`,
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/verify-auth`,
           {
             credentials: "include",
             headers: {
