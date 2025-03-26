@@ -8,23 +8,23 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Toggle } from "@/components/ui/toggle";
+// import { Toggle } from "@/components/ui/toggle";
 import AuthPage from "./AuthPage";
 import {
   Sheet,
   SheetTrigger,
   SheetContent,
   SheetTitle,
-  SheetDescription,
+  // SheetDescription,
 } from "@/components/ui/sheet";
 import { useTheme } from "../../context/ThemeProvider";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   BookLock,
   ChevronRight,
   FileTerminal,
   Heart,
-  HelpCircle,
+  // HelpCircle,
   Lock,
   Moon,
   Package,
@@ -33,7 +33,7 @@ import {
   Sun,
   User,
   User2,
-  XIcon,
+  // XIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";

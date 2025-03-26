@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import {
   Card,
   CardContent,
-  CardDescription,
+  // CardDescription,
   CardHeader,
 } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -21,14 +21,14 @@ import {
   Book,
   CircleHelp,
   Eye,
-  FileQuestion,
+  // FileQuestion,
   IndianRupeeIcon,
   ReceiptIndianRupee,
   X,
 } from "lucide-react";
 import React from "react";
 // import DragAndDrop from "../components/DragAndDrop";
-import { FileWithPath } from "react-dropzone";
+// import { FileWithPath } from "";
 import {
   Accordion,
   AccordionContent,

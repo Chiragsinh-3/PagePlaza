@@ -9,7 +9,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogClose,
+  // DialogClose,
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
 import {

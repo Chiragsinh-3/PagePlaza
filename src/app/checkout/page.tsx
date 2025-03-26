@@ -28,6 +28,7 @@ export default function CheckoutPage() {
     <RazorpayPayment
       orderId={orderData.data._id}
       amount={orderData.data.totalAmount}
+      setIsManageDialogOpen={() => {}}
       onSuccess={() => {
         router.push("/order-confirmation/${id}");
         // router.push(`/checkout?orderId=${orderId}`);

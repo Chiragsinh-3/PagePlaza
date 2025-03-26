@@ -2,16 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
-import {
-  BookOpen,
-  ShoppingCart,
-  Heart,
-  Shield,
-  Database,
-  Code,
-  CalendarIcon,
-  ArrowRight,
-} from "lucide-react";
+import { BookOpen, ShoppingCart, Shield, ArrowRight } from "lucide-react";
 import {
   SiNextdotjs,
   SiReact,
