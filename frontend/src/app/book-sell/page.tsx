@@ -39,12 +39,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useCreateProductsMutation } from "@/store/api";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const OptionalDetails: { [key: string]: string[] } = {
   BookInformation: ["Author", "Edition (Year)", "Description"],
 };
 
-const Page = () => {
+const Page = async () => {
   const [addFile, removeFile] = useFileSelection();
   const [noShippingCharge, setNoShippingCharge] = React.useState(false);
   const [paymentMode, setPaymentMode] = React.useState<string>("");
@@ -71,6 +73,12 @@ const Page = () => {
     },
     images: [] as File[],
   });
+  const user = await useSelector((state: RootState) => state.user.user);
+  const userid = user?._id;
+  if (!user) {
+    toast.error("Please login to sell book");
+    router.push("/");
+  }
 
   // Add new function to handle image files
   const handleAddFile = (file: File) => {

@@ -13,10 +13,16 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import Addresses from "@/app/components/Addresses";
 import Link from "next/link";
-const CartPage = () => {
-  const user = useSelector((state: RootState) => state.user.user);
-
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+const CartPage = async () => {
+  const user = await await useSelector((state: RootState) => state.user.user);
   const id = user?._id;
+  const router = useRouter();
+  if (!user) {
+    toast.error("Please login view details of this book");
+    router.push("/");
+  }
   const { data: cartData, refetch: getCartData } = useCartByUserIdQuery(id);
   const [removeFromCartApi] = useCartDeleteMutation();
   const [createOrUpdateOrderApi] = useCreateOrUpdateOrderMutation();

@@ -50,7 +50,7 @@ const Header = () => {
   const isLoginOpen = useSelector(
     (state: RootState) => state.user.isLoginDialogOpen
   );
-  const user = useSelector((state: RootState) => state.user.user);
+  const user = await useSelector((state: RootState) => state.user.user);
   // console.log(user.profilePicture);
   const userId = user?._id;
 

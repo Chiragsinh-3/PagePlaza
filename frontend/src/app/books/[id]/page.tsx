@@ -21,8 +21,12 @@ import {
 } from "@/store/api";
 import { toast } from "sonner";
 import BookLoader from "@/lib/BookLoader";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { useRouter } from "next/navigation";
 
 interface Seller {
+  _id: string;
   name: string;
   contact: string;
   addresses?: string[];
@@ -37,6 +41,7 @@ interface DiscountCalculation {
 export default function BookDetail() {
   const params = useParams();
   const id = params.id;
+  const router = useRouter();
   const [book, setBook] = useState<(typeof books)[0] | null>(null);
   // const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -48,7 +53,12 @@ export default function BookDetail() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
-
+  const user = useSelector((state: RootState) => state.user.user);
+  const userid = user?._id;
+  if (!user) {
+    toast.error("Please login view details of this book");
+    router.push("/");
+  }
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (imageRef.current) {
       const { left, top, width, height } =
@@ -80,6 +90,23 @@ export default function BookDetail() {
       <div className='min-h-screen flex items-center justify-center'>
         <div className='text-center'>
           <h1 className='text-2xl font-bold mb-4'>Book not found</h1>
+          <Link href='/books'>
+            <div className='text-blue-500 hover:underline'>
+              Back to all books
+            </div>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (user && (book.seller as Seller)._id === userid) {
+    return (
+      <div className='min-h-screen flex items-center justify-center'>
+        <div className='text-center'>
+          <h1 className='text-2xl font-bold mb-4'>
+            You can't buy your own book
+          </h1>
           <Link href='/books'>
             <div className='text-blue-500 hover:underline'>
               Back to all books

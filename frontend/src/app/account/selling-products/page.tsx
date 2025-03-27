@@ -34,7 +34,7 @@ interface Product {
 type ViewMode = "list" | "grid";
 
 const ProductsPage = () => {
-  const user = useSelector((state: RootState) => state.user.user);
+  const user = await useSelector((state: RootState) => state.user.user);
   const sellerId = user?._id;
   const {
     data: products,
