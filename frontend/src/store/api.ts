@@ -48,9 +48,10 @@ const API_URLS = {
 export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
-    credentials: "include", // This ensures cookies are sent with requests
+    credentials: "include",
     prepareHeaders: (headers) => {
       headers.set("Content-Type", "application/json");
+      // Don't manually set cookies in headers
       return headers;
     },
   }),

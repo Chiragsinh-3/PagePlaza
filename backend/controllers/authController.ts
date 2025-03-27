@@ -87,19 +87,22 @@ const login = async (req: Request, res: Response) => {
 
     res.cookie("accessToken", accesstoken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // true in production
+      secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       path: "/",
-      domain:
-        process.env.NODE_ENV === "production"
-          ? ".onrender.com" // Adjust this to match your domain
-          : undefined,
     });
 
-    // Don't send the token in the response body
+    // Log cookie being set
+    console.log("Setting cookie:", {
+      token: accesstoken,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    });
+
     return response(res, 200, "Login Successful", { user });
   } catch (error: any) {
+    console.error("Login error:", error);
     return response(res, 500, error.message || "Internal Server Error");
   }
 };

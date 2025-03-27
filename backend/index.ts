@@ -26,7 +26,7 @@ app.use(
     origin: ["https://pageplaza.netlify.app", "http://localhost:3000"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type"], // Simplified headers since we're using cookies
+    allowedHeaders: ["Content-Type", "Authorization"], // Add Authorization header
   })
 );
 app.use(bodyParser.json());
@@ -49,7 +49,9 @@ app.use(
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 24 * 60 * 60 * 1000,
       domain:
-        process.env.NODE_ENV === "production" ? ".onrender.com" : undefined,
+        process.env.NODE_ENV === "production"
+          ? "https://pageplaza.onrender.com"
+          : undefined,
     },
   })
 );
