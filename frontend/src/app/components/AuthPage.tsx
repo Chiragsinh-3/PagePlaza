@@ -129,9 +129,6 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLoginOpen, setIsLoginOpen }) => {
 
     try {
       const result = await login(loginForm).unwrap();
-      console.log(result);
-      Cookies.set("accessToken", result.data.accesstoken);
-
       if (result.success) {
         toast.success("Login successful!");
       }

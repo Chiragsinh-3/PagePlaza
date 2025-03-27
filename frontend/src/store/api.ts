@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://pageplaza.onrender.com/api";
+// const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+const BASE_URL = "https://pageplaza.onrender.com/api";
 
 const API_URLS = {
   // Auth Apis
@@ -48,11 +48,9 @@ const API_URLS = {
 export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
-    credentials: "include",
+    credentials: "include", // This ensures cookies are sent with requests
     prepareHeaders: (headers) => {
-      headers.set("Accept", "application/json");
       headers.set("Content-Type", "application/json");
-      // Don't manually set cookie header - let the browser handle it
       return headers;
     },
   }),

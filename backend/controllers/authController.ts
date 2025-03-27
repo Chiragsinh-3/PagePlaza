@@ -93,11 +93,12 @@ const login = async (req: Request, res: Response) => {
       path: "/",
       domain:
         process.env.NODE_ENV === "production"
-          ? ".onrender.com" // Allow sharing between subdomains
+          ? ".onrender.com" // Adjust this to match your domain
           : undefined,
     });
 
-    return response(res, 200, "Login Successful", { accesstoken, user });
+    // Don't send the token in the response body
+    return response(res, 200, "Login Successful", { user });
   } catch (error: any) {
     return response(res, 500, error.message || "Internal Server Error");
   }
