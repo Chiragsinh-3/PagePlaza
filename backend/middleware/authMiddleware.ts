@@ -16,7 +16,7 @@ const authenticatedUser = async (
   next: NextFunction
 ) => {
   try {
-    const token = req.cookies.accessToken.toString();
+    const { accessToken: token } = req.cookies;
     console.log("Token:", token);
 
     if (!token) {

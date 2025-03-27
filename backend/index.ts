@@ -26,7 +26,7 @@ app.use(
     origin: ["https://pageplaza.netlify.app", "http://localhost:3000"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+    allowedHeaders: ["Content-Type"], // Simplified headers since we're using cookies
   })
 );
 app.use(bodyParser.json());
