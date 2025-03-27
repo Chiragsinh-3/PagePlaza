@@ -1,4 +1,4 @@
-import { Request, Response, Router } from "express";
+import { Request, Response, Router, NextFunction } from "express";
 import {
   register,
   verifyEmail,
@@ -36,35 +36,46 @@ router.get(
 // Google callback Route
 router.get(
   "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: `${process.env.FRONTEND_PORT}/auth?error=google-auth-failed`,
-    session: false,
-  }),
+  (req: Request, res: Response, next: NextFunction) => {
+    console.log("Google callback received");
+    passport.authenticate("google", {
+      failureRedirect: `${process.env.FRONTEND_PORT}/auth?error=google-auth-failed`,
+      session: false,
+    })(req, res, next);
+  },
   async (req: Request, res: Response) => {
     try {
+      console.log("Google authentication successful");
+
+      if (!req.user) {
+        console.error("No user data in request");
+        throw new Error("Authentication failed - No user data");
+      }
+
       const user = req.user as IUser;
+      console.log("Generating token for user:", user._id);
+
       const accessToken = generateToken(user);
 
-      res.cookie("accessToken", accessToken, {
+      const cookieOptions = {
         httpOnly: true,
-        secure: true, // Always true since we're using HTTPS
-        sameSite: "none", // Required for cross-site cookies
+        secure: true,
+        sameSite: "none" as const,
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: "/",
-        domain:
-          process.env.NODE_ENV === "production"
-            ? "https://pageplaza.onrender.com"
-            : undefined,
-      });
+      };
 
-      console.log("Google Auth - Cookie being set:", {
-        accessToken,
-        headers: res.getHeaders(),
-      });
+      console.log("Setting cookie with options:", cookieOptions);
+
+      res.cookie("accessToken", accessToken, cookieOptions);
+
+      console.log("Redirecting to success page");
       return res.redirect(`${process.env.FRONTEND_PORT}/auth/google/success`);
     } catch (error) {
-      console.error("Google auth error:", error);
-      res.redirect(`${process.env.FRONTEND_PORT}/auth?error=server-error`);
+      console.error("Google callback error:", error);
+      return res.redirect(
+        `${process.env.FRONTEND_PORT}/auth?error=server-error`
+      );
     }
   }
 );

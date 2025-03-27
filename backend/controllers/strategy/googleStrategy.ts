@@ -27,9 +27,7 @@ export const initializePassport = () => {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
         callbackURL: process.env.GOOGLE_CALLBACK_URL || "",
         passReqToCallback: true,
-        scope: ["profile", "email"],
       },
-
       async (
         req: Request,
         accessToken,
@@ -37,32 +35,44 @@ export const initializePassport = () => {
         profile,
         done: (error: any, user?: IUser | false) => void
       ) => {
-        const { emails, displayName, photos } = profile;
-        console.log("this is my Profile", profile);
+        console.log("Google Strategy - Profile received:", {
+          id: profile.id,
+          emails: profile.emails,
+          displayName: profile.displayName,
+        });
+
         try {
-          if (!emails || !emails[0]) {
+          if (!profile.emails || !profile.emails[0]) {
+            console.error("No email found in Google profile");
             return done(new Error("No email found from Google profile"));
           }
-          let user = await User.findOne({ email: emails[0].value });
+
+          let user = await User.findOne({ email: profile.emails[0].value });
+
           if (user) {
-            if (!user.profilePicture && photos?.[0]?.value) {
-              user.profilePicture = photos[0]?.value;
+            console.log("Existing user found:", user._id);
+            if (!user.profilePicture && profile.photos?.[0]?.value) {
+              user.profilePicture = profile.photos[0].value;
               await user.save();
             }
             return done(null, user);
           }
+
+          console.log("Creating new user from Google profile");
           user = await User.create({
             googleId: profile.id,
-            name: displayName,
-            email: emails[0].value,
-            profilePicture: photos?.[0]?.value,
+            name: profile.displayName,
+            email: profile.emails[0].value,
+            profilePicture: profile.photos?.[0]?.value,
             isVerified: true,
             agreeTerms: true,
           });
-          console.log(user, "user created");
-          done(null, user);
+
+          console.log("New user created:", user._id);
+          return done(null, user);
         } catch (err) {
-          done(err);
+          console.error("Google Strategy Error:", err);
+          return done(err);
         }
       }
     )
