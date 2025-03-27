@@ -19,7 +19,7 @@ const authenticatedUser = async (
     console.log("Auth Middleware - All cookies:", req.cookies);
     console.log("Auth Middleware - Headers:", req.headers);
 
-    let token = req.cookies.token;
+    let token = req.cookies.accessToken; // Changed from token to accessToken
 
     // Also check Authorization header as fallback
     if (!token && req.headers.authorization?.startsWith("Bearer ")) {

@@ -98,17 +98,17 @@ const login = async (req: Request, res: Response) => {
     };
 
     // Set the cookie
-    res.cookie("token", accessToken, cookieOptions);
+    res.cookie("accessToken", accessToken, cookieOptions);
 
     console.log("Login - Cookie being set:", {
-      token: accessToken,
+      accessToken,
       options: cookieOptions,
       headers: res.getHeaders(),
     });
 
     return response(res, 200, "Login Successful", {
       user,
-      token: accessToken, // Send token in response body as well
+      token: accessToken,
     });
   } catch (error: any) {
     console.error("Login error:", error);
@@ -118,7 +118,7 @@ const login = async (req: Request, res: Response) => {
 
 const logout = async (req: Request, res: Response) => {
   try {
-    res.cookie("token", "", {
+    res.cookie("accessToken", "", {
       httpOnly: true,
       expires: new Date(0),
       secure: process.env.NODE_ENV === "production",
