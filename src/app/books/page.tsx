@@ -40,7 +40,11 @@ const page = () => {
   const [category, setCategory] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState("newest");
   const [loading, isLoading] = useState(false);
-  const { data: products, refetch } = useGetAllProductsQuery({});
+  const {
+    data: products,
+    refetch,
+    isLoading: isFetching,
+  } = useGetAllProductsQuery({});
   const [addToWishlist] = useAddToWishlistMutation();
   const router = useRouter();
   const user = useSelector((state: RootState) => state.user.user);
@@ -152,6 +156,7 @@ const page = () => {
 
   return (
     <div className='min-h-screen '>
+      {isFetching && <BookLoader />}
       <div className='container mx-auto px-4 py-4'>
         <nav className='mb-8 flex items-center space-x-2 text-sm'>
           {/* Breadcrumb Navigation */}
