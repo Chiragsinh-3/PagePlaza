@@ -51,11 +51,6 @@ export const api = createApi({
     credentials: "include",
     prepareHeaders: (headers, { getState }) => {
       headers.set("Content-Type", "application/json");
-      // You might want to add this as a fallback
-      const token = localStorage.getItem("token");
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
       return headers;
     },
   }),

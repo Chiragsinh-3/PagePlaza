@@ -47,11 +47,16 @@ router.get(
 
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        secure: true, // Always true since we're using HTTPS
+        sameSite: "none", // Required for cross-site cookies
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: "/",
+        domain:
+          process.env.NODE_ENV === "production"
+            ? "https://pageplaza.onrender.com"
+            : undefined,
       });
+
       console.log("Google Auth - Cookie being set:", {
         accessToken,
         headers: res.getHeaders(),
