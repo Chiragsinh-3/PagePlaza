@@ -37,7 +37,7 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: `${process.env.FRONTEND_PORT}auth?error=google-auth-failed`,
+    failureRedirect: `${process.env.FRONTEND_PORT}/auth?error=google-auth-failed`,
     session: false,
   }),
   async (req: Request, res: Response) => {
@@ -53,10 +53,10 @@ router.get(
         path: "/",
       });
 
-      return res.redirect(`${process.env.FRONTEND_PORT}auth/google/success`);
+      return res.redirect(`${process.env.FRONTEND_PORT}/auth/google/success`);
     } catch (error) {
       console.error("Google auth error:", error);
-      res.redirect(`${process.env.FRONTEND_PORT}auth?error=server-error`);
+      res.redirect(`${process.env.FRONTEND_PORT}/auth?error=server-error`);
     }
   }
 );
