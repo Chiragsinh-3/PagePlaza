@@ -16,8 +16,8 @@ const authenticatedUser = async (
   next: NextFunction
 ) => {
   try {
-    console.log("Auth Middleware - All cookies:", req.cookies);
-    console.log("Auth Middleware - Headers:", req.headers);
+    // console.log("Auth Middleware - All cookies:", req.cookies);
+    // console.log("Auth Middleware - Headers:", req.headers);
 
     let token = req.cookies.accessToken; // Changed from token to accessToken
 

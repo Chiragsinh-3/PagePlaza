@@ -52,7 +52,10 @@ router.get(
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: "/",
       });
-
+      console.log("Google Auth - Cookie being set:", {
+        accessToken,
+        headers: res.getHeaders(),
+      });
       return res.redirect(`${process.env.FRONTEND_PORT}/auth/google/success`);
     } catch (error) {
       console.error("Google auth error:", error);
