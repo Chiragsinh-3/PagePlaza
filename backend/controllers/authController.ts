@@ -83,24 +83,33 @@ const login = async (req: Request, res: Response) => {
     if (!user.isVerified) {
       return response(res, 400, "Email not verified");
     }
-    const accesstoken = generateToken(user);
+    const accessToken = generateToken(user);
 
-    res.cookie("accessToken", accesstoken, {
+    // Set strict cookie options
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      sameSite:
+        process.env.NODE_ENV === "production"
+          ? ("none" as const)
+          : ("lax" as const),
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       path: "/",
+    };
+
+    // Set the cookie
+    res.cookie("token", accessToken, cookieOptions);
+
+    console.log("Login - Cookie being set:", {
+      token: accessToken,
+      options: cookieOptions,
+      headers: res.getHeaders(),
     });
 
-    // Log cookie being set
-    console.log("Setting cookie:", {
-      token: accesstoken,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    return response(res, 200, "Login Successful", {
+      user,
+      token: accessToken, // Send token in response body as well
     });
-
-    return response(res, 200, "Login Successful", { user });
   } catch (error: any) {
     console.error("Login error:", error);
     return response(res, 500, error.message || "Internal Server Error");
@@ -109,7 +118,13 @@ const login = async (req: Request, res: Response) => {
 
 const logout = async (req: Request, res: Response) => {
   try {
-    res.clearCookie("accessToken");
+    res.cookie("token", "", {
+      httpOnly: true,
+      expires: new Date(0),
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      path: "/",
+    });
     return response(res, 200, "Logout Successful");
   } catch (error: any) {
     return response(res, 500, error.message || "Internal Server Error");

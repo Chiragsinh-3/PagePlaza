@@ -16,28 +16,42 @@ const authenticatedUser = async (
   next: NextFunction
 ) => {
   try {
-    const { accessToken: token } = req.cookies;
-    console.log("Token:", token);
+    console.log("Auth Middleware - All cookies:", req.cookies);
+    console.log("Auth Middleware - Headers:", req.headers);
+
+    let token = req.cookies.token;
+
+    // Also check Authorization header as fallback
+    if (!token && req.headers.authorization?.startsWith("Bearer ")) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    console.log("Auth Middleware - Token found:", token ? "Yes" : "No");
 
     if (!token) {
       return response(res, 401, "Please login to access this resource");
     }
 
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string
-    ) as jwt.JwtPayload;
+    try {
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET as string
+      ) as jwt.JwtPayload;
 
-    if (!decoded || !decoded.userId) {
+      console.log("Auth Middleware - Token decoded:", decoded);
+
+      if (!decoded || !decoded.userId) {
+        return response(res, 401, "Invalid token");
+      }
+
+      req.id = decoded.userId;
+      next();
+    } catch (jwtError) {
+      console.error("JWT Verification failed:", jwtError);
       return response(res, 401, "Invalid token");
     }
-
-    req.id = decoded.userId;
-    next();
   } catch (error) {
-    if (error instanceof jwt.JsonWebTokenError) {
-      return response(res, 401, "Invalid token");
-    }
+    console.error("Auth middleware error:", error);
     return response(res, 500, "Authentication error");
   }
 };

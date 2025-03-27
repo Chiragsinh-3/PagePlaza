@@ -49,9 +49,13 @@ export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
     credentials: "include",
-    prepareHeaders: (headers) => {
+    prepareHeaders: (headers, { getState }) => {
       headers.set("Content-Type", "application/json");
-      // Don't manually set cookies in headers
+      // You might want to add this as a fallback
+      const token = localStorage.getItem("token");
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
       return headers;
     },
   }),
@@ -72,6 +76,13 @@ export const api = createApi({
         method: "POST",
         body,
       }),
+      // Add transformResponse to handle the token
+      transformResponse: (response: any) => {
+        if (response.data?.token) {
+          localStorage.setItem("token", response.data.token);
+        }
+        return response;
+      },
       invalidatesTags: ["User"],
     }),
     verifyEmail: builder.mutation({

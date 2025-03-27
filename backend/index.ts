@@ -21,14 +21,32 @@ const PORT = process.env.PORT || 8080;
 
 const app = express();
 
+app.use(cookieParser());
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://pageplaza.netlify.app",
+  // add any other origins you need
+];
+
 app.use(
   cors({
-    origin: ["https://pageplaza.netlify.app", "http://localhost:3000"],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"], // Add Authorization header
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// Enable pre-flight requests for all routes
+app.options("*", cors());
+
 app.use(bodyParser.json());
 // Cookie settings
 app.use(cookieParser());
