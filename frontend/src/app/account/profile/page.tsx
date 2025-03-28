@@ -10,9 +10,7 @@ import { Edit, Save, X } from "lucide-react";
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
 
-  const user = (await useSelector(
-    (state: RootState) => state.user.user
-  )) as any;
+  const user = useSelector((state: RootState) => state.user.user) as any;
   console.log(user.profilePicture);
   const [profile, setProfile] = useState({
     name: user?.name || "",
