@@ -46,7 +46,7 @@ const OptionalDetails: { [key: string]: string[] } = {
   BookInformation: ["Author", "Edition (Year)", "Description"],
 };
 
-const Page = async () => {
+const Page = () => {
   const [addFile, removeFile] = useFileSelection();
   const [noShippingCharge, setNoShippingCharge] = React.useState(false);
   const [paymentMode, setPaymentMode] = React.useState<string>("");
@@ -73,7 +73,7 @@ const Page = async () => {
     },
     images: [] as File[],
   });
-  const user = await useSelector((state: RootState) => state.user.user);
+  const user = useSelector((state: RootState) => state.user.user);
   const userid = user?._id;
   if (!user) {
     toast.error("Please login to sell book");

@@ -14,7 +14,7 @@ import { generateToken } from "../utils/generateToken";
 const register = async (req: Request, res: Response) => {
   try {
     const { name, email, password, agreeTerms } = req.body;
-    const existingUser = await User.findOne({ email });
+    const existinguser = User.findOne({ email });
 
     if (existingUser) {
       return response(res, 400, "User Already Exist");
@@ -48,7 +48,7 @@ const verifyEmail = async (req: Request, res: Response) => {
   try {
     const { token } = req.params;
     console.log("Searching for token:", token);
-    const user = await User.findOne({ verificationToken: token });
+    const user = User.findOne({ verificationToken: token });
     console.log("Found user:", user ? "Yes" : "No");
 
     if (!user) {
@@ -74,7 +74,7 @@ const verifyEmail = async (req: Request, res: Response) => {
 const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const user = User.findOne({ email });
 
     if (!user || !(await user.comparePassword(password))) {
       return response(res, 400, "Invalid Email or Password");
@@ -134,7 +134,7 @@ const logout = async (req: Request, res: Response) => {
 const forgotPassword = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email });
+    const user = User.findOne({ email });
 
     if (!user) {
       return response(res, 404, "User not found");
@@ -154,7 +154,7 @@ const resetPassword = async (req: Request, res: Response) => {
   try {
     const { token } = req.params;
     const { password } = req.body;
-    const user = await User.findOne({
+    const user = User.findOne({
       resetPasswordToken: token,
       resetPasswordExpires: { $gt: Date.now() },
     });
@@ -176,7 +176,7 @@ const updateUserDetails = async (req: Request, res: Response) => {
   try {
     // change previous email to new one too
     const { name, phoneNumber, email } = req.body;
-    const existingUser = await User.findOne({ email });
+    const existinguser = User.findOne({ email });
     if (!existingUser) {
       return response(res, 400, "User does not exist");
     }
@@ -192,7 +192,7 @@ const updateUserDetails = async (req: Request, res: Response) => {
 const deleteUser = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
-    const existingUser = await User.findOne({ email });
+    const existinguser = User.findOne({ email });
     if (!existingUser) {
       return response(res, 400, "User does not exist");
     }
@@ -211,7 +211,7 @@ const checkUserAuth = async (req: Request, res: Response) => {
       return response(res, 401, "Unauthenticated, please login to access");
     }
 
-    const user = await User.findById(userId).select(
+    const user = User.findById(userId).select(
       "-password -resetPasswordToken -resetPasswordExpires -verificationToken -__v"
     );
 

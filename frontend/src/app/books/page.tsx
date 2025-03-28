@@ -33,7 +33,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 // import { toast } from "sonner";
 
-const page = async () => {
+const page = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [condition, setCondition] = useState<string[]>([]);
   const [type, setType] = useState<string[]>([]);
@@ -47,7 +47,7 @@ const page = async () => {
   } = useGetAllProductsQuery({});
   const [addToWishlist] = useAddToWishlistMutation();
   const router = useRouter();
-  const user = await useSelector((state: RootState) => state.user.user);
+  const user = useSelector((state: RootState) => state.user.user);
   const id = user?._id;
 
   useEffect(() => {

@@ -171,7 +171,7 @@ const OrderCard = ({
 
 const OrdersPage = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
-  const user = await useSelector((state: RootState) => state.user.user);
+  const user = useSelector((state: RootState) => state.user.user);
   const { data: orders, isLoading } = useGetOrderByUserQuery(user?._id);
 
   const toggleViewMode = () => {

@@ -15,8 +15,8 @@ import Addresses from "@/app/components/Addresses";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-const CartPage = async () => {
-  const user = await await useSelector((state: RootState) => state.user.user);
+const CartPage = () => {
+  const user = useSelector((state: RootState) => state.user.user);
   const id = user?._id;
   const router = useRouter();
   if (!user) {

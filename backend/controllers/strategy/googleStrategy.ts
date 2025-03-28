@@ -12,7 +12,7 @@ passport.serializeUser((user: any, done) => {
 
 passport.deserializeUser(async (id: string, done) => {
   try {
-    const user = await User.findById(id);
+    const user = User.findById(id);
     done(null, user);
   } catch (error) {
     done(error, null);
@@ -47,7 +47,7 @@ export const initializePassport = () => {
             return done(new Error("No email found from Google profile"));
           }
 
-          let user = await User.findOne({ email: profile.emails[0].value });
+          let user = User.findOne({ email: profile.emails[0].value });
 
           if (user) {
             console.log("Existing user found:", user._id);
@@ -59,7 +59,7 @@ export const initializePassport = () => {
           }
 
           console.log("Creating new user from Google profile");
-          user = await User.create({
+          user = User.create({
             googleId: profile.id,
             name: profile.displayName,
             email: profile.emails[0].value,

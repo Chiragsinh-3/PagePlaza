@@ -11,7 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const WishlistPage = () => {
-  const user = await useSelector((state: RootState) => state.user.user);
+  const user = useSelector((state: RootState) => state.user.user);
   const id = user?._id;
   const { data: wishlist, isLoading, error } = useWishlistByUserIdQuery(id);
 
