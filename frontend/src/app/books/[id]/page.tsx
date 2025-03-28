@@ -57,7 +57,7 @@ export default function BookDetail() {
   const userid = user?._id;
   if (!user) {
     toast.error("Please login view details of this book");
-    router.push("/");
+    router.push("/books");
   }
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (imageRef.current) {

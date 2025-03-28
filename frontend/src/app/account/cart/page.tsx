@@ -20,7 +20,7 @@ const CartPage = () => {
   const id = user?._id;
   const router = useRouter();
   if (!user) {
-    toast.error("Please login view details of this book");
+    toast.error("Please login First to view cart");
     router.push("/");
   }
   const { data: cartData, refetch: getCartData } = useCartByUserIdQuery(id);
