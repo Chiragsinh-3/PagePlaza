@@ -75,10 +75,14 @@ const Page = () => {
   });
   const user = useSelector((state: RootState) => state.user.user);
   const userid = user?._id;
-  if (!user) {
-    toast.error("Please login to sell book");
-    router.push("/");
-  }
+
+  // Move the authentication check into useEffect
+  React.useEffect(() => {
+    if (!user) {
+      toast.error("Please login to sell book");
+      router.push("/");
+    }
+  }, [user, router]);
 
   // Add new function to handle image files
   const handleAddFile = (file: File) => {

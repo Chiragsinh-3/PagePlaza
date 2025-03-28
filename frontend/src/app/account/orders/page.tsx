@@ -172,20 +172,15 @@ const OrdersPage = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const user = useSelector((state: RootState) => state.user.user);
   const router = useRouter();
-  if (!user) {
-    toast.error("Please login to view orders");
-    router.push("/");
-  }
+
   const { data: orders, isLoading } = useGetOrderByUserQuery(user?._id);
 
   useEffect(() => {
-    const user = useSelector((state: RootState) => state.user.user);
-
     if (!user) {
-      toast.error("Please login to view orders");
+      toast.error("Please login to see orders");
       router.push("/");
     }
-  }, []);
+  }, [user, router]);
 
   const toggleViewMode = () => {
     setViewMode(viewMode === "grid" ? "list" : "grid");

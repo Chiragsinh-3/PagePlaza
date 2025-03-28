@@ -76,7 +76,7 @@ export const createOrUpdateAddressByUserId = async (
 export const getAddressByUserId = async (req: Request, res: Response) => {
   try {
     const userId = req.id;
-    const user = User.findById(userId).populate("addresses");
+    const user = await User.findById(userId).populate("addresses");
     if (!user) {
       return response(res, 404, "User not found");
     }

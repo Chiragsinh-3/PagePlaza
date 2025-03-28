@@ -12,21 +12,16 @@ import { toast } from "sonner";
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
 
-  const user = useSelector((state: RootState) => state.user.user) as any;
+  const user = useSelector((state: RootState) => state.user?.user) as any;
   const router = useRouter();
-  if (!user) {
-    toast.error("Please login to view profile");
-    router.push("/");
-  }
-  useEffect(() => {
-    const user = useSelector((state: RootState) => state.user.user);
 
+  useEffect(() => {
     if (!user) {
       toast.error("Please login to view profile");
       router.push("/");
     }
-  }, []);
-  // console.log(user?.profilePicture);
+  }, [user, router]);
+
   const [profile, setProfile] = useState({
     name: user?.name || "",
     email: user?.email || "",
@@ -54,8 +49,8 @@ export default function ProfilePage() {
   return (
     <div className='min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black py-12 px-4 sm:px-6 lg:px-8'>
       <Head>
-        <title>User Profile | {user.name}</title>
-        <meta name='description' content={`Profile page for ${user.name}`} />
+        <title>User Profile | {user?.name}</title>
+        <meta name='description' content={`Profile page for ${user?.name}`} />
       </Head>
 
       <motion.div
@@ -68,13 +63,13 @@ export default function ProfilePage() {
         <div className='relative bg-gradient-to-r from-indigo-500 to-purple-600 p-6'>
           <div className='flex items-center space-x-4'>
             <img
-              src={user.profilePicture || "/default-avatar.png"}
-              alt={`${user.name}'s profile`}
+              src={user?.profilePicture || "/default-avatar.png"}
+              alt={`${user?.name}'s profile`}
               className='w-20 h-20 rounded-full border-4 border-white dark:border-gray-700 object-cover'
             />
             <div>
-              <h1 className='text-2xl font-bold text-white'>{user.name}</h1>
-              <p className='text-indigo-100 text-sm'>{user.email}</p>
+              <h1 className='text-2xl font-bold text-white'>{user?.name}</h1>
+              <p className='text-indigo-100 text-sm'>{user?.email}</p>
             </div>
           </div>
         </div>
@@ -158,7 +153,7 @@ export default function ProfilePage() {
                 <span className='font-medium text-gray-500 dark:text-gray-400'>
                   Joined:
                 </span>{" "}
-                {new Date(user.createdAt).toLocaleDateString()}
+                {new Date(user?.createdAt).toLocaleDateString()}
               </p>
               <p>
                 <span className='font-medium text-gray-500 dark:text-gray-400'>
@@ -166,10 +161,10 @@ export default function ProfilePage() {
                 </span>{" "}
                 <span
                   className={
-                    user.isVerified ? "text-green-600" : "text-yellow-600"
+                    user?.isVerified ? "text-green-600" : "text-yellow-600"
                   }
                 >
-                  {user.isVerified ? "Verified" : "Unverified"}
+                  {user?.isVerified ? "Verified" : "Unverified"}
                 </span>
               </p>
             </div>

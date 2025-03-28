@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from "react";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -17,7 +18,7 @@ import {
   SheetTitle,
   // SheetDescription,
 } from "@/components/ui/sheet";
-import { useTheme } from "../../context/ThemeProvider";
+
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   BookLock,
@@ -43,7 +44,9 @@ import { useCartByUserIdQuery, useLogoutMutation } from "@/store/api";
 import Image from "next/image";
 
 const Header = () => {
-  const { darkMode, toggleDarkMode } = useTheme();
+  // Move ALL hooks to the top, before any conditional logic
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -51,14 +54,15 @@ const Header = () => {
     (state: RootState) => state.user.isLoginDialogOpen
   );
   const user = useSelector((state: RootState) => state.user.user);
-  // console.log(user.profilePicture);
   const userId = user?._id;
-
   const { data: cartData } = useCartByUserIdQuery(userId);
-  // const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
-
-  const userPlaceholder = user?.name?.[0] || <User />;
   const [logout] = useLogoutMutation();
+
+  // Effect for handling mounting
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handleLoginClick = () => {
     dispatch(toggleLoginDialog());
     setIsDropdownOpen(false);
@@ -73,15 +77,34 @@ const Header = () => {
       setIsDropdownOpen(false);
     }
   };
+
   const handleLogout = () => {
     logout({}).unwrap();
     dispatch({ type: "user/logout" });
     dispatch(toggleLoginDialog());
     setIsDropdownOpen(false);
     router.push("/");
-
-    console.log("Logout clicked");
   };
+
+  // Instead of returning null, render a placeholder or empty header
+  if (!mounted) {
+    return (
+      <header className='sticky top-0 z-50 py-4 w-full border-b bg-slate-100/45 text-black dark:text-white dark:border-[rgb(28,18,43)] dark:bg-black/45 backdrop-blur-md'>
+        <div className='container mx-auto flex h-[5vh] max-w-6xl items-center justify-center md:px-6'>
+          {/* Render minimal content to match structure */}
+          <div className='container mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6'>
+            <Link href='/' className='flex items-center gap-2'>
+              <p className='sm:font-semibold mr-2 text-xs sm:text-sm font-light'>
+                PAGE PLAZA
+              </p>
+            </Link>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
+  const userPlaceholder = user?.name?.[0] || <User />;
   const menuItems = [
     ...(user
       ? [
@@ -354,9 +377,9 @@ const Header = () => {
         <div className='flex items-center gap-4'>
           <button
             className='rounded-full dark:bg-black bg-white p-2 hover:bg-secondary dark:hover:bg-secondary'
-            onClick={toggleDarkMode}
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           >
-            {darkMode ? (
+            {theme === "dark" ? (
               <Sun className='h-5 w-5' />
             ) : (
               <Moon className='h-5 w-5' />

@@ -17,18 +17,12 @@ const WishlistPage = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const id = user?._id;
   const router = useRouter();
-  if (!user) {
-    toast.error("Please login to view your wishlist");
-    router.push("/");
-  }
-  useEffect(() => {
-    const user = useSelector((state: RootState) => state.user.user);
-
+  React.useEffect(() => {
     if (!user) {
-      toast.error("Please login to view your wishlist");
+      toast.error("Please login to view wishlist");
       router.push("/");
     }
-  }, []);
+  }, [user, router]);
   const { data: wishlist, isLoading, error } = useWishlistByUserIdQuery(id);
 
   const wishlistData = wishlist?.data;

@@ -9,12 +9,10 @@ import {
 } from "../config/emailConfig";
 import { generateToken } from "../utils/generateToken";
 
-// Add this interface near the top of the file
-
 const register = async (req: Request, res: Response) => {
   try {
     const { name, email, password, agreeTerms } = req.body;
-    const existinguser = User.findOne({ email });
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return response(res, 400, "User Already Exist");
@@ -48,7 +46,7 @@ const verifyEmail = async (req: Request, res: Response) => {
   try {
     const { token } = req.params;
     console.log("Searching for token:", token);
-    const user = User.findOne({ verificationToken: token });
+    const user = await User.findOne({ verificationToken: token });
     console.log("Found user:", user ? "Yes" : "No");
 
     if (!user) {
@@ -74,7 +72,7 @@ const verifyEmail = async (req: Request, res: Response) => {
 const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    const user = User.findOne({ email });
+    const user = await User.findOne({ email });
 
     if (!user || !(await user.comparePassword(password))) {
       return response(res, 400, "Invalid Email or Password");
@@ -85,7 +83,6 @@ const login = async (req: Request, res: Response) => {
     }
     const accessToken = generateToken(user);
 
-    // Set strict cookie options
     const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -93,18 +90,11 @@ const login = async (req: Request, res: Response) => {
         process.env.NODE_ENV === "production"
           ? ("none" as const)
           : ("lax" as const),
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
     };
 
-    // Set the cookie
     res.cookie("accessToken", accessToken, cookieOptions);
-
-    console.log("Login - Cookie being set:", {
-      accessToken,
-      options: cookieOptions,
-      headers: res.getHeaders(),
-    });
 
     return response(res, 200, "Login Successful", {
       user,
@@ -134,7 +124,7 @@ const logout = async (req: Request, res: Response) => {
 const forgotPassword = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
-    const user = User.findOne({ email });
+    const user = await User.findOne({ email });
 
     if (!user) {
       return response(res, 404, "User not found");
@@ -154,7 +144,7 @@ const resetPassword = async (req: Request, res: Response) => {
   try {
     const { token } = req.params;
     const { password } = req.body;
-    const user = User.findOne({
+    const user = await User.findOne({
       resetPasswordToken: token,
       resetPasswordExpires: { $gt: Date.now() },
     });
@@ -174,15 +164,15 @@ const resetPassword = async (req: Request, res: Response) => {
 
 const updateUserDetails = async (req: Request, res: Response) => {
   try {
-    // change previous email to new one too
     const { name, phoneNumber, email } = req.body;
-    const existinguser = User.findOne({ email });
-    if (!existingUser) {
+    const user = await User.findOne({ email });
+
+    if (!user) {
       return response(res, 400, "User does not exist");
     }
-    existingUser.name = name;
-    existingUser.phoneNumber = phoneNumber;
-    await existingUser.save();
+    user.name = name;
+    user.phoneNumber = phoneNumber;
+    await user.save();
     return response(res, 200, "User details updated successfully");
   } catch (error: any) {
     return response(res, 500, error.message || "Internal Server Error");
@@ -192,8 +182,9 @@ const updateUserDetails = async (req: Request, res: Response) => {
 const deleteUser = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
-    const existinguser = User.findOne({ email });
-    if (!existingUser) {
+    const user = await User.findOne({ email });
+
+    if (!user) {
       return response(res, 400, "User does not exist");
     }
     await User.deleteOne({ email });
@@ -211,7 +202,7 @@ const checkUserAuth = async (req: Request, res: Response) => {
       return response(res, 401, "Unauthenticated, please login to access");
     }
 
-    const user = User.findById(userId).select(
+    const user = await User.findById(userId).select(
       "-password -resetPasswordToken -resetPasswordExpires -verificationToken -__v"
     );
 

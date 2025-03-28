@@ -55,10 +55,12 @@ export default function BookDetail() {
   const imageRef = useRef<HTMLDivElement>(null);
   const user = useSelector((state: RootState) => state.user.user);
   const userid = user?._id;
-  if (!user) {
-    toast.error("Please login view details of this book");
-    router.push("/books");
-  }
+  useEffect(() => {
+    if (!user) {
+      toast.error("Please login to view book");
+      router.push("/");
+    }
+  }, [user, router]);
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (imageRef.current) {
       const { left, top, width, height } =

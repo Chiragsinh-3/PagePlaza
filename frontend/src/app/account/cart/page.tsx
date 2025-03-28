@@ -19,10 +19,12 @@ const CartPage = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const id = user?._id;
   const router = useRouter();
-  if (!user) {
-    toast.error("Please login First to view cart");
-    router.push("/");
-  }
+  React.useEffect(() => {
+    if (!user) {
+      toast.error("Please login to view cart");
+      router.push("/");
+    }
+  }, [user, router]);
   const { data: cartData, refetch: getCartData } = useCartByUserIdQuery(id);
   const [removeFromCartApi] = useCartDeleteMutation();
   const [createOrUpdateOrderApi] = useCreateOrUpdateOrderMutation();

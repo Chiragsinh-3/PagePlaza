@@ -3,9 +3,8 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { Roboto_Mono } from "next/font/google";
 import LayoutWrapper from "./LayoutWrapper";
-import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
-import { ThemeProvider } from "../context/ThemeProvider"; // Import the provider
+import { ThemeProvider } from "next-themes";
 
 const roboto_Mono = Roboto_Mono({
   subsets: ["latin"],
@@ -22,15 +21,17 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang='en'>
-      {/* Force dark mode for testing */}
+    <html lang='en' suppressHydrationWarning>
       <body className={roboto_Mono.className}>
-        <ThemeProvider>
-          {/* Wrap the whole app with ThemeProvider */}
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
           <LayoutWrapper>
             <Header />
             {children}
-            <Toaster />
             <Footer />
           </LayoutWrapper>
         </ThemeProvider>

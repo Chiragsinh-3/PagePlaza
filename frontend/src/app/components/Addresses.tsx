@@ -46,7 +46,7 @@ const Addresses = ({
 }: AddressesProps) => {
   const router = useRouter();
   const user = useSelector((state: RootState) => state.user?.user);
-  const id = user._id;
+  const id = user?._id;
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isManageDialogOpen, setIsManageDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useProductBySellerIdQuery } from "@/store/api";
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
@@ -38,10 +38,12 @@ type ViewMode = "list" | "grid";
 const ProductsPage = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const router = useRouter();
-  if (!user) {
-    toast.error("Please login to view Selling products");
-    router.push("/");
-  }
+  useEffect(() => {
+    if (!user) {
+      toast.error("Please login to view your book");
+      router.push("/");
+    }
+  }, [user, router]);
   const sellerId = user?._id;
   const {
     data: products,

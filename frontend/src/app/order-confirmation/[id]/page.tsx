@@ -19,18 +19,13 @@ const OrderConfirmationPage = () => {
   const user = useSelector((state: RootState) => state.user.user);
 
   const router = useRouter();
-  if (!user) {
-    toast.error("You are not the user of this order");
-    router.push("/");
-  }
-  useEffect(() => {
-    const user = useSelector((state: RootState) => state.user.user);
 
+  useEffect(() => {
     if (!user) {
       toast.error("You are not the user of this order");
       router.push("/");
     }
-  }, []);
+  }, [user, router]);
 
   if (isLoading) {
     return (
