@@ -107,21 +107,32 @@ export default function Home() {
 
   const [logout] = useLogoutMutation();
   const dispatch = useDispatch();
+
   useEffect(() => {
-    const checkUser = verifyAuth({}).unwrap();
-    if (!checkUser) {
-      logout({}).unwrap();
-      dispatch({ type: "user/logout" });
-    } else {
-      dispatch({ type: "user/login" });
-    }
+    const verifyUser = async () => {
+      try {
+        const checkUser = await verifyAuth({}).unwrap();
+        if (checkUser.success) {
+          dispatch({ type: "user/authStatus" });
+        }
+      } catch (error: any) {
+        if (error.status === 401) {
+          await logout({}).unwrap();
+          dispatch({ type: "user/logout" });
+        }
+      }
+    };
+
+    verifyUser();
+
     const interval = setInterval(() => {
       setCurrentImage((currentImage) =>
         currentImage === bannerImages.length - 1 ? 0 : currentImage + 1
       );
     }, 5000);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [dispatch, logout, verifyAuth]);
   return (
     <main className='min-h-screen'>
       <section className='relative h-[700px] overflow-hidden'>

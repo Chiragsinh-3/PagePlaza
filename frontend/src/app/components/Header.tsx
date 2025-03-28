@@ -362,7 +362,7 @@ const Header = () => {
                     <ShoppingCart className='h-5 w-5 mr-2 lg:mr-0 text-gray-500 dark:text-gray-400' />
                     <span className='hidden lg:block'>Cart</span>
                   </Button>
-                  {user && (
+                  {cartData && (
                     <span className='absolute top-2 left-5 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white rounded-full w-3 h-3 text-[10px] flex items-center justify-center'>
                       {cartData?.data?.cart?.items?.length}
                     </span>

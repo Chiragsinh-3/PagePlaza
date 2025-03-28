@@ -24,6 +24,7 @@ import BookLoader from "@/lib/BookLoader";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
+import { Loader } from "lucide-react";
 
 interface Seller {
   _id: string;
@@ -48,7 +49,7 @@ export default function BookDetail() {
   const [quantity, setQuantity] = useState(1);
   const [addToWishlist] = useAddToWishlistMutation();
   const [wishlistDelete] = useWishlistDeleteMutation();
-  const [addToCart] = useAddToCartMutation();
+  const [addToCart, { isLoading: isAddingToCart }] = useAddToCartMutation();
   const { data: productData, isLoading } = useProductByIdQuery(id);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
@@ -330,8 +331,20 @@ export default function BookDetail() {
                     className='w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded flex items-center justify-center space-x-2 transition-all'
                     onClick={handleAddToCart}
                   >
-                    <FiShoppingCart />
-                    <span>Add to Cart</span>
+                    {/* <FiShoppingCart /> */}
+                    {isAddingToCart ? (
+                      <div className='flex items-center space-x-2'>
+                        <div className='w-4 h-4 border-t-2 border-b-2 border-white rounded-full animate-spin'></div>
+                        {/* <span>
+                          <Loader  />
+                        </span> */}
+                      </div>
+                    ) : (
+                      <div className='flex items-center space-x-2'>
+                        <FiShoppingCart />
+                        <span>Add to Cart</span>
+                      </div>
+                    )}
                   </motion.button>
 
                   <div className='flex space-x-4'>

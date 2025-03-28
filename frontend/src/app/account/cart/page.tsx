@@ -70,7 +70,7 @@ const CartPage = () => {
 
   const calculateTotalAmount = () => {
     if (!cartData?.data?.cart?.items) return 0;
-    return cartData.data.cart.items.reduce(
+    return cartData?.data.cart.items.reduce(
       (total: number, item: any) =>
         total + item.product.finalprice * item.quantity,
       0
