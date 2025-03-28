@@ -2,6 +2,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import RazorpayPayment from "@/components/RazorpayPayment";
 import { useGetOrderByOrderIdQuery } from "@/store/api";
+import { toast } from "sonner";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -13,7 +14,8 @@ export default function CheckoutPage() {
   );
 
   if (!orderId) {
-    return <div>No order ID provided</div>;
+    toast.error("Order ID not provided");
+    router.push("/");
   }
 
   if (isLoading) {
@@ -21,7 +23,8 @@ export default function CheckoutPage() {
   }
 
   if (!orderData?.data) {
-    return <div>Order not found</div>;
+    toast.error("Order not found");
+    router.push("/");
   }
 
   return (

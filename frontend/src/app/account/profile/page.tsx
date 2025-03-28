@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Head from "next/head";
 import { useSelector } from "react-redux";
@@ -18,7 +18,15 @@ export default function ProfilePage() {
     toast.error("Please login to view profile");
     router.push("/");
   }
-  console.log(user.profilePicture);
+  useEffect(() => {
+    const user = useSelector((state: RootState) => state.user.user);
+
+    if (!user) {
+      toast.error("Please login to view profile");
+      router.push("/");
+    }
+  }, []);
+  // console.log(user?.profilePicture);
   const [profile, setProfile] = useState({
     name: user?.name || "",
     email: user?.email || "",

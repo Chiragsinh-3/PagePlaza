@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Grid2X2Icon,
@@ -180,6 +180,15 @@ const OrdersPage = () => {
     router.push("/");
   }
   const { data: orders, isLoading } = useGetOrderByUserQuery(user?._id);
+
+  useEffect(() => {
+    const user = useSelector((state: RootState) => state.user.user);
+
+    if (!user) {
+      toast.error("Please login to view orders");
+      router.push("/");
+    }
+  }, []);
 
   const toggleViewMode = () => {
     setViewMode(viewMode === "grid" ? "list" : "grid");

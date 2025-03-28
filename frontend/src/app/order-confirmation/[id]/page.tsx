@@ -1,7 +1,7 @@
 "use client";
 import { useGetOrderByOrderIdQuery } from "@/store/api";
 import { useParams, useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,9 @@ import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
 
 const OrderConfirmationPage = () => {
+  const params = useParams();
+  const id = params.id as string;
+  const { data: orderData, isLoading, error } = useGetOrderByOrderIdQuery(id);
   const user = useSelector((state: RootState) => state.user.user);
 
   const router = useRouter();
@@ -19,9 +22,14 @@ const OrderConfirmationPage = () => {
     toast.error("You are not the user of this order");
     router.push("/");
   }
-  const params = useParams();
-  const id = params.id as string;
-  const { data: orderData, isLoading, error } = useGetOrderByOrderIdQuery(id);
+  useEffect(() => {
+    const user = useSelector((state: RootState) => state.user.user);
+
+    if (!user) {
+      toast.error("You are not the user of this order");
+      router.push("/");
+    }
+  }, []);
 
   if (isLoading) {
     return (

@@ -1,7 +1,7 @@
 "use client";
 import { useWishlistByUserIdQuery } from "@/store/api";
 import { RootState } from "@/store/store";
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,6 +20,14 @@ const WishlistPage = () => {
     toast.error("Please login to view your wishlist");
     router.push("/");
   }
+  useEffect(() => {
+    const user = useSelector((state: RootState) => state.user.user);
+
+    if (!user) {
+      toast.error("Please login to view your wishlist");
+      router.push("/");
+    }
+  }, []);
   const { data: wishlist, isLoading, error } = useWishlistByUserIdQuery(id);
 
   const wishlistData = wishlist?.data;
