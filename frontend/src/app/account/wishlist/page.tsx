@@ -11,6 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import BookLoader from "@/lib/BookLoader";
 
 const WishlistPage = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -40,7 +41,7 @@ const WishlistPage = () => {
           animate={{ opacity: 1, scale: 1 }}
           className='text-xl dark:text-gray-200'
         >
-          Loading your wishlist...
+          <BookLoader />
         </motion.div>
       </div>
     );

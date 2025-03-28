@@ -10,6 +10,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
+import BookLoader from "@/lib/BookLoader";
 
 const OrderConfirmationPage = () => {
   const params = useParams();
@@ -40,7 +41,7 @@ const OrderConfirmationPage = () => {
           transition={{ duration: 0.5 }}
           className='text-xl dark:text-gray-200'
         >
-          Loading order details...
+          <BookLoader />
         </motion.div>
       </div>
     );

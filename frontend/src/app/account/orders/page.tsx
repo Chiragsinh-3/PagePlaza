@@ -13,6 +13,7 @@ import { RootState } from "@/store/store";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import BookLoader from "@/lib/BookLoader";
 
 interface OrderItemProps {
   item: {
@@ -27,11 +28,7 @@ const OrderItem = ({ item, viewMode }: OrderItemProps) => {
   const { data: productData, isLoading } = useProductByIdQuery(item.product);
 
   if (isLoading || !productData) {
-    return (
-      <div className='text-blue-600 dark:text-blue-300 text-sm animate-pulse'>
-        Loading product details...
-      </div>
-    );
+    return <BookLoader />;
   }
 
   const product = productData.data;
@@ -195,11 +192,7 @@ const OrdersPage = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className='min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center'>
-        <p className='text-blue-600 dark:text-blue-300'>Loading orders...</p>
-      </div>
-    );
+    return <BookLoader />;
   }
 
   if (!orders || orders.data.length === 0) {

@@ -3,6 +3,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import RazorpayPayment from "@/components/RazorpayPayment";
 import { useGetOrderByOrderIdQuery } from "@/store/api";
 import { toast } from "sonner";
+import BookLoader from "@/lib/BookLoader";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function CheckoutPage() {
   }
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <BookLoader />;
   }
 
   if (!orderData?.data) {
