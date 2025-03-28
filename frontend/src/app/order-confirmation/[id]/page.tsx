@@ -1,14 +1,24 @@
 "use client";
 import { useGetOrderByOrderIdQuery } from "@/store/api";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ShoppingCart, MapPin, CreditCard } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
+import { RootState } from "@/store/store";
+import { useSelector } from "react-redux";
 
 const OrderConfirmationPage = () => {
+  const user = useSelector((state: RootState) => state.user.user);
+
+  const router = useRouter();
+  if (!user) {
+    toast.error("You are not the user of this order");
+    router.push("/");
+  }
   const params = useParams();
   const id = params.id as string;
   const { data: orderData, isLoading, error } = useGetOrderByOrderIdQuery(id);

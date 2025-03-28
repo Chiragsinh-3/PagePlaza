@@ -11,6 +11,8 @@ import { useGetOrderByUserQuery, useProductByIdQuery } from "@/store/api";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import Link from "next/link";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface OrderItemProps {
   item: {
@@ -172,6 +174,11 @@ const OrderCard = ({
 const OrdersPage = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const user = useSelector((state: RootState) => state.user.user);
+  const router = useRouter();
+  if (!user) {
+    toast.error("Please login to view orders");
+    router.push("/");
+  }
   const { data: orders, isLoading } = useGetOrderByUserQuery(user?._id);
 
   const toggleViewMode = () => {

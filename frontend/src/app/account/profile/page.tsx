@@ -6,11 +6,18 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 // import { User, UserEdit } from "@/types/user";
 import { Edit, Save, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
 
   const user = useSelector((state: RootState) => state.user.user) as any;
+  const router = useRouter();
+  if (!user) {
+    toast.error("Please login to view profile");
+    router.push("/");
+  }
   console.log(user.profilePicture);
   const [profile, setProfile] = useState({
     name: user?.name || "",

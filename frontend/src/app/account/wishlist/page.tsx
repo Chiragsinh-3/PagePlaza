@@ -9,10 +9,17 @@ import { Button } from "@/components/ui/button";
 import { Heart, ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const WishlistPage = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const id = user?._id;
+  const router = useRouter();
+  if (!user) {
+    toast.error("Please login to view your wishlist");
+    router.push("/");
+  }
   const { data: wishlist, isLoading, error } = useWishlistByUserIdQuery(id);
 
   const wishlistData = wishlist?.data;

@@ -7,6 +7,8 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ChevronDown, ChevronUp, LayoutGrid, List } from "lucide-react";
 import BookLoader from "@/lib/BookLoader";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 // Define Product interface based on the data structure
 interface Product {
@@ -35,6 +37,11 @@ type ViewMode = "list" | "grid";
 
 const ProductsPage = () => {
   const user = useSelector((state: RootState) => state.user.user);
+  const router = useRouter();
+  if (!user) {
+    toast.error("Please login to view Selling products");
+    router.push("/");
+  }
   const sellerId = user?._id;
   const {
     data: products,
