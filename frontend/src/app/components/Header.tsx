@@ -109,7 +109,7 @@ const Header = () => {
     ...(user
       ? [
           {
-            href: "account/profile",
+            href: "/account/profile",
             content: (
               <div className='flex space-x-4 items-center p-2'>
                 {user?.profilePicture ? (
