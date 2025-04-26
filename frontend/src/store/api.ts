@@ -49,8 +49,17 @@ export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
     credentials: "include",
-    prepareHeaders: (headers, { getState }) => {
-      headers.set("Content-Type", "application/json");
+    prepareHeaders: (headers, { getState, endpoint }) => {
+      // Remove or conditionally set the Content-Type header if payload is FormData.
+      // One approach is to check if the endpoint is sending form data.
+      // Alternatively, you could override in the specific mutation endpoint.
+      const isFormDataRequest = headers.get("is-form-data");
+      if (isFormDataRequest) {
+        headers.delete("Content-Type"); // Let the browser set this header automatically
+        headers.delete("is-form-data"); // Remove the custom header after check
+      } else {
+        headers.set("Content-Type", "application/json");
+      }
       return headers;
     },
   }),
@@ -148,6 +157,9 @@ export const api = createApi({
         url: API_URLS.PRODUCTS,
         method: "POST",
         body,
+        headers: {
+          "is-form-data": "true",
+        },
       }),
       invalidatesTags: ["Product"],
     }),

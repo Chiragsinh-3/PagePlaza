@@ -173,7 +173,7 @@ const Page = () => {
       });
       return;
     }
-
+    
     if (
       paymentMode === "bank" &&
       (!formData.paymentDetails?.bankName ||
@@ -185,8 +185,7 @@ const Page = () => {
       });
       return;
     }
-
-    // Append all form fields except images and payment details
+    // First, append all form fields EXCEPT paymentMode and paymentDetails
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "images") {
         if (Array.isArray(value)) {
@@ -194,25 +193,29 @@ const Page = () => {
             submitData.append("images", file);
           });
         }
-      } else if (key === "paymentDetails") {
-        // Handle payment details
-        if (value) {
-          Object.entries(value).forEach(([k, v]) => {
-            if (v) {
-              submitData.append(`paymentDetails.${k}`, v as string);
-            }
-          });
-        }
-      } else if (key === "paymentMode") {
-        // Don't append paymentMode here
-        // It will be handled separately below
-      } else {
+      } else if (key !== "paymentMode" && key !== "paymentDetails") {
         submitData.append(key, value as string);
       }
     });
 
-    // Add paymentMode as a single string value
-    submitData.append("paymentMode", formData.paymentMode);
+    // Then handle payment mode and details separately
+    submitData.append("paymentMode", formData.paymentMode); // Add only once
+
+    // Handle payment details based on mode
+    if (formData.paymentMode === "UPI") {
+      submitData.append("paymentDetails", JSON.stringify({
+        upiId: formData.paymentDetails.upiId
+      }));
+    } else if (formData.paymentMode === "Bank Account") {
+      submitData.append("paymentDetails", JSON.stringify({
+        bankDetails: {
+          accountNumber: formData.paymentDetails.accountNumber,
+          ifscCode: formData.paymentDetails.ifscCode,
+          bankName: formData.paymentDetails.bankName
+        }
+      }));
+    }
+
     submitData.append("noShippingCharge", noShippingCharge.toString());
 
     // Log the FormData (for debugging)
@@ -236,31 +239,13 @@ const Page = () => {
     setFormData((prev) => ({
       ...prev,
       paymentMode: value,
+      paymentDetails: {
+        upiId: "",
+        bankName: "",
+        accountNumber: "",
+        ifscCode: "",
+      }
     }));
-    // Reset payment details based on payment mode
-    if (value === "UPI") {
-      setFormData((prev) => ({
-        ...prev,
-        paymentMode: value,
-        paymentDetails: {
-          upiId: "",
-          bankName: "",
-          accountNumber: "",
-          ifscCode: "",
-        },
-      }));
-    } else if (value === "Bank Account") {
-      setFormData((prev) => ({
-        ...prev,
-        paymentMode: value,
-        paymentDetails: {
-          upiId: "",
-          bankName: "",
-          accountNumber: "",
-          ifscCode: "",
-        },
-      }));
-    }
   };
 
   const handlePreviewClick = (
@@ -798,7 +783,7 @@ const Page = () => {
                       >
                         <div className='flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-gray-200 hover:border-blue-400 transition dark:bg-gray-700 dark:border-gray-600 dark:hover:border-blue-400'>
                           <RadioGroupItem
-                            value='UPI'
+                            value="UPI"
                             id='upi'
                             className='dark:bg-gray-700 dark:border-gray-600 dark:hover:border-blue-400'
                           />
@@ -811,7 +796,7 @@ const Page = () => {
                         </div>
                         <div className='flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-gray-200 hover:border-blue-400 transition dark:bg-gray-700 dark:border-gray-600 dark:hover:border-blue-400'>
                           <RadioGroupItem
-                            value='bank'
+                            value="Bank Account"
                             id='bank'
                             className='dark:bg-gray-700 dark:border-gray-600 dark:hover:border-blue-400'
                           />
