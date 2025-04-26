@@ -16,40 +16,35 @@ cloudinary.config({
 });
 
 interface CustomFile extends Express.Multer.File {
-  path: string;
+  buffer: Buffer;
 }
 
 const uploadToCloudinary = (file: CustomFile): Promise<UploadApiResponse> => {
   const options: UploadApiOptions = {
     resource_type: "image",
-    folder: "pageplaza", // Add a folder to organize uploads
+    folder: "pageplaza",
     use_filename: true,
     unique_filename: true,
   };
 
   return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload(file.path, options, (error, result) => {
+    // Create a buffer stream from the file buffer
+    const streamifier = require('streamifier');
+    const stream = cloudinary.uploader.upload_stream(options, (error, result) => {
       if (error || !result) {
         console.error("Cloudinary upload error:", error);
         return reject(error || new Error("Upload failed"));
       }
       resolve(result as UploadApiResponse);
     });
+
+    streamifier.createReadStream(file.buffer).pipe(stream);
   });
 };
 
-// Update storage configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, `${uniqueSuffix}-${file.originalname}`);
-  },
-});
+// Use memory storage instead of disk storage
+const storage = multer.memoryStorage();
 
-// More flexible Multer configuration
 const multerMiddleware: RequestHandler = multer({
   storage,
   limits: {
