@@ -5,7 +5,7 @@ import Head from "next/head";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 // import { User, UserEdit } from "@/types/user";
-import { Edit, Save, X } from "lucide-react";
+import { Edit, Save, User, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -62,11 +62,18 @@ export default function ProfilePage() {
         {/* Profile Header */}
         <div className='relative bg-gradient-to-r from-indigo-500 to-purple-600 p-6'>
           <div className='flex items-center space-x-4'>
-            <img
-              src={user?.profilePicture || "/default-avatar.png"}
-              alt={`${user?.name}'s profile`}
-              className='w-20 h-20 rounded-full border-4 border-white dark:border-gray-700 object-cover'
-            />
+            {user.profilePicture ? (
+              <img
+                src={user?.profilePicture}
+                alt={`${user?.name}'s profile`}
+                className='w-20 h-20 rounded-full border-4 border-white dark:border-gray-700 object-cover'
+              />
+            ) : (
+              <div className='w-20 h-20 rounded-full border-4 border-white dark:border-gray-700 flex items-center justify-center text-white text-4xl'>
+                <User />
+              </div>
+            )}
+
             <div>
               <h1 className='text-2xl font-bold text-white'>{user?.name}</h1>
               <p className='text-indigo-100 text-sm'>{user?.email}</p>

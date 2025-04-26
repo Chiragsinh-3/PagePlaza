@@ -127,7 +127,7 @@ const NewBooks = () => {
             drag='x'
             dragConstraints={dragConstraints}
             dragElastic={1}
-            dragMomentum={true}
+            dragMomentum={false}
             onDragStart={() => setIsDragging(true)}
             onDragEnd={(e, info) => {
               setIsDragging(false);
@@ -139,7 +139,6 @@ const NewBooks = () => {
               <motion.div
                 key={book._id}
                 className='w-[300px] flex-shrink-0 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden'
-                whileHover={{ scale: isDragging ? 1 : 1.02 }}
               >
                 <Link
                   href={`/books/${book._id}`}

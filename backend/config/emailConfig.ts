@@ -50,7 +50,7 @@ export const sendWelcomeEmail = async (to: string) => {
 // Send verification email
 export const sendVerificationToEmail = async (to: string, token: string) => {
   const baseUrl = process.env.FRONTEND_URL || "http://localhost:8000";
-  const verificationUrl = `${baseUrl}/verify/${token}`;
+  const verificationUrl = `${baseUrl}verify/${token}`;
   const body = generateEmailTemplate(
     "Verify your PagePlaza account",
     "Click the button below to complete your registration",
