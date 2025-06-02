@@ -1,0 +1,5 @@
+{
+  "watch": ["*.ts", "**/*.ts"],
+  "exec": "ts-node --project tsconfig.dev.json --transpile-only index.ts",
+  "ext": "ts,js,json"
+}

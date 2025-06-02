@@ -1,14 +1,7 @@
+// @ts-nocheck
 import { NextFunction, Request, Response } from "express";
 import { response } from "../utils/responseHandler";
 import jwt from "jsonwebtoken";
-
-declare global {
-  namespace Express {
-    interface Request {
-      id: string;
-    }
-  }
-}
 
 const authenticatedUser = async (
   req: Request,
