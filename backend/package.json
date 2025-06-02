@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "tsc --skipLibCheck",
+    "prepare-production": "node prepare-production.js",
+    "build": "npm run prepare-production && tsc --skipLibCheck",
     "start": "NODE_OPTIONS='--max-old-space-size=2048' node dist/index.js",
+    "start:prod": "node dist/index.js",
     "dev": "NODE_OPTIONS='--max-old-space-size=2048' nodemon --exec ts-node --project tsconfig.dev.json --transpile-only index.ts",
     "dev:skipTypes": "NODE_OPTIONS='--max-old-space-size=2048' ts-node --project tsconfig.dev.json --transpile-only index.ts",
     "start:js": "node run-server.js"
@@ -35,7 +37,9 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "razorpay": "^2.9.6",
-    "streamifier": "^0.1.1"
+    "streamifier": "^0.1.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -50,8 +54,6 @@
     "@types/nodemailer": "^6.4.17",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.16",
-    "nodemon": "^3.1.9",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "nodemon": "^3.1.9"
   }
 }
