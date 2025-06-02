@@ -31,9 +31,13 @@ import {
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { useSearchParams } from 'next/navigation';
 // import { toast } from "sonner";
 
-const page = () => {
+const Page = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
   const [currentPage, setCurrentPage] = useState(1);
   const [condition, setCondition] = useState<string[]>([]);
   const [type, setType] = useState<string[]>([]);
@@ -46,7 +50,6 @@ const page = () => {
     isLoading: isFetching,
   } = useGetAllProductsQuery({});
   const [addToWishlist] = useAddToWishlistMutation();
-  const router = useRouter();
   const user = useSelector((state: RootState) => state.user.user);
   const id = user?._id;
 
@@ -59,6 +62,19 @@ const page = () => {
     router.refresh();
   }, [id]);
   const [wishlistDelete] = useWishlistDeleteMutation();
+
+  // Update searchTerm when URL params change
+  useEffect(() => {
+    const newSearchTerm = searchParams.get('search') || '';
+    setSearchTerm(newSearchTerm);
+    refetch(); // Refetch data when search params change
+  }, [searchParams]);
+
+  // Effect to handle initial load and parameter changes
+  useEffect(() => {
+    refetch();
+    router.refresh();
+  }, [searchTerm]); // Add searchTerm as dependency
 
   const bookperpage = 6;
 
@@ -86,30 +102,42 @@ const page = () => {
     }
   };
 
-  const filterBooks =
-    products?.data?.filter((book: any) => {
-      if (!products?.data) return [];
+  const filterBooks = products?.data?.filter((book: any) => {
+    if (!products?.data) return [];
 
-      const conditionMatch =
-        condition.length === 0 ||
-        condition
-          .map((item) => item.toLowerCase())
-          .includes(book.condition.toLowerCase());
+    // Search filter - use the searchTerm state
+    const matchesSearch = searchTerm
+      ? book.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (book.author?.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (book.description?.toLowerCase().includes(searchTerm.toLowerCase()))
+      : true;
 
-      const typeMatch =
-        type.length === 0 ||
-        type
-          .map((item) => item.toLowerCase())
-          .includes(book.classType.toLowerCase());
+    // Existing filters
+    const conditionMatch =
+      condition.length === 0 ||
+      condition
+        .map((item) => item.toLowerCase())
+        .includes(book.condition.toLowerCase());
 
-      const categoryMatch =
-        category.length === 0 ||
-        category
-          .map((item) => item.toLowerCase())
-          .includes(book.category.toLowerCase());
+    const typeMatch =
+      type.length === 0 ||
+      type
+        .map((item) => item.toLowerCase())
+        .includes(book.classType.toLowerCase());
 
-      return conditionMatch && typeMatch && categoryMatch;
-    }) || [];
+    const categoryMatch =
+      category.length === 0 ||
+      category
+        .map((item) => item.toLowerCase())
+        .includes(book.category.toLowerCase());
+
+    return matchesSearch && conditionMatch && typeMatch && categoryMatch;
+  }) || [];
+
+  // Reset pagination when filters or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, condition, type, category]);
 
   const sortedBooks = [...(filterBooks || [])].sort((a, b) => {
     switch (sortOption) {
@@ -381,4 +409,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

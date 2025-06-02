@@ -325,6 +325,7 @@ const ProductsPage = () => {
                       <span className='text-sm text-gray-500 dark:text-gray-400'>
                         Payment: {product.paymentMode}
                       </span>
+                      {/*
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -332,6 +333,7 @@ const ProductsPage = () => {
                       >
                         Edit
                       </motion.button>
+                      */}
                     </div>
                   </motion.div>
                 )}
@@ -390,13 +392,15 @@ const ProductsPage = () => {
                     <span className='text-sm font-bold text-blue-600 dark:text-blue-400'>
                       ₹{product.finalprice}
                     </span>
+                    {/*
+                 
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className='px-2 py-1 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white text-xs rounded'
                     >
                       Edit
-                    </motion.button>
+                    </motion.button> */}
                   </div>
                 </div>
               </div>

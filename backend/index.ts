@@ -26,7 +26,7 @@ app.use(cookieParser());
 const allowedOrigins = [
   "http://localhost:3000",
   "https://pageplaza.netlify.app",
-  // add any other origins you need
+  "https://pageplaza.onrender.com"
 ];
 
 app.use(
@@ -40,8 +40,8 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    exposedHeaders: ["set-cookie"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie", "Set-Cookie"],
+    exposedHeaders: ["Set-Cookie"],
   })
 );
 
@@ -64,13 +64,9 @@ app.use(
       ttl: 24 * 60 * 60,
     }),
     cookie: {
-      secure: true, // Always true for production
-      sameSite: "none", // Required for cross-site cookies
-      maxAge: 24 * 60 * 60 * 1000,
-      domain:
-        process.env.NODE_ENV === "production"
-          ? "https://pageplaza.onrender.com"
-          : undefined,
+      secure: true,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000
     },
   })
 );

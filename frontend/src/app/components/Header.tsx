@@ -36,7 +36,7 @@ import {
   User2,
   // XIcon,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { toggleLoginDialog } from "@/store/slice/userSlice";
@@ -57,6 +57,28 @@ const Header = () => {
   const userId = user?._id;
   const { data: cartData } = useCartByUserIdQuery(userId);
   const [logout] = useLogoutMutation();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const handleSearch = (searchTerm: string) => {
+    if (pathname === "/books") {
+      // If we're on books page, update the URL with search param
+      const params = new URLSearchParams(searchParams.toString());
+      if (searchTerm) {
+        params.set("search", searchTerm);
+      } else {
+        params.delete("search");
+      }
+      router.push(`/books?${params.toString()}`);
+    } else {
+      // If we're on another page, redirect to books page with search
+      if (searchTerm) {
+        router.push(`/books?search=${encodeURIComponent(searchTerm)}`);
+      } else {
+        router.push("/books");
+      }
+    }
+  };
 
   // Effect for handling mounting
   useEffect(() => {
@@ -291,6 +313,8 @@ const Header = () => {
                 type='search'
                 placeholder='Book Name / Author / Subject / Publisher'
                 className='pl-8 full'
+                defaultValue={searchParams.get("search") || ""}
+                onChange={(e) => handleSearch(e.target.value)}
               />
             </div>
             <div className='sm:hidden flex  relative  w-full'>
@@ -308,6 +332,8 @@ const Header = () => {
                       type='search'
                       placeholder='Search...'
                       className='pl-8 w-full'
+                      defaultValue={searchParams.get("search") || ""}
+                      onChange={(e) => handleSearch(e.target.value)}
                     />
                   </div>
                 </DropdownMenuContent>
