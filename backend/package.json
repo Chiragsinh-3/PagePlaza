@@ -7,9 +7,9 @@
     "build": "npm run prepare-production && tsc --skipLibCheck",
     "start": "node dist/index.js",
     "postinstall": "npm run build",
-    "dev": "nodemon --exec npx ts-node --project tsconfig.dev.json --transpile-only index.ts",
-    "dev:skipTypes": "npx ts-node --project tsconfig.dev.json --transpile-only index.ts",
-    "start:js": "node run-server.js"
+    "dev": "npx nodemon --exec npx ts-node --transpile-only index.ts",
+    "dev:skipTypes": "npx ts-node --transpile-only index.ts",
+    "start:js": "node server.js"
   },
   "engines": {
     "node": ">=16.0.0"
