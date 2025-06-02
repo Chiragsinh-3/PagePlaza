@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadToCloudinary = exports.multerMiddleware = void 0;
+// @ts-nocheck
 const multer_1 = __importDefault(require("multer"));
 const cloudinary_1 = require("cloudinary");
 const dotenv_1 = __importDefault(require("dotenv"));

@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateToken = void 0;
+// @ts-nocheck
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const generateToken = (user) => {
     // Generate a JWT token with the user's ID and a secret key

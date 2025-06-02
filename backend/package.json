@@ -1,14 +1,14 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "prepare-production": "node prepare-production.js",
     "build": "npm run prepare-production && tsc --skipLibCheck",
-    "start": "NODE_OPTIONS='--max-old-space-size=2048' node dist/index.js",
-    "start:prod": "node dist/index.js",
-    "dev": "NODE_OPTIONS='--max-old-space-size=2048' nodemon --exec ts-node --project tsconfig.dev.json --transpile-only index.ts",
-    "dev:skipTypes": "NODE_OPTIONS='--max-old-space-size=2048' ts-node --project tsconfig.dev.json --transpile-only index.ts",
+    "start": "node dist/index.js",
+    "postinstall": "npm run build",
+    "dev": "nodemon --exec npx ts-node --project tsconfig.dev.json --transpile-only index.ts",
+    "dev:skipTypes": "npx ts-node --project tsconfig.dev.json --transpile-only index.ts",
     "start:js": "node run-server.js"
   },
   "engines": {
@@ -38,10 +38,8 @@
     "passport-google-oauth20": "^2.0.0",
     "razorpay": "^2.9.6",
     "streamifier": "^0.1.1",
+    "typescript": "^5.3.3",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
-  },
-  "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/body-parser": "^1.19.5",
     "@types/cookie-parser": "^1.4.8",
@@ -53,7 +51,9 @@
     "@types/node": "^20.11.17",
     "@types/nodemailer": "^6.4.17",
     "@types/passport": "^1.0.17",
-    "@types/passport-google-oauth20": "^2.0.16",
+    "@types/passport-google-oauth20": "^2.0.16"
+  },
+  "devDependencies": {
     "nodemon": "^3.1.9"
   }
 }

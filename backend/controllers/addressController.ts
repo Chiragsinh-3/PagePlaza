@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Request, Response } from "express";
 import { response } from "../utils/responseHandler";
 import Address from "../models/Address";

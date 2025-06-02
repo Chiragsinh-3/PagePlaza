@@ -3,7 +3,7 @@ services:
     name: pageplaza-backend
     env: node
     buildCommand: npm install && npm run build
-    startCommand: npm run start:prod
+    startCommand: bash start.sh
     envVars:
       - key: NODE_OPTIONS
         value: --max-old-space-size=2048

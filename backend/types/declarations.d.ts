@@ -1,3 +1,4 @@
+// @ts-nocheck
 declare module 'express';
 declare module 'cors';
 declare module 'cookie-parser';

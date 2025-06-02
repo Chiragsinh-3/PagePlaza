@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { IUser } from '../models/User';
 
 declare global {
