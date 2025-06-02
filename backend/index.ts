@@ -29,23 +29,34 @@ app.use(cookieParser());
 
 const allowedOrigins = [
   "http://localhost:3000",
+  "http://localhost:5173", // Add common Vite development port
   "https://pageplaza.netlify.app",
-  "https://pageplaza.onrender.com"
+  "https://pageplaza.onrender.com",
+  // Add any other origins your frontend might use
 ];
 
+// Configure CORS with proper preflight handling
 app.use(
   cors({
     origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      // Allow requests with no origin (like mobile apps, curl requests)
+      if (!origin) {
+        return callback(null, true);
+      }
+      
+      if (allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
+        console.log(`Origin ${origin} not allowed by CORS`);
         callback(new Error("Not allowed by CORS"));
       }
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Cookie", "Set-Cookie"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie", "Set-Cookie", "Origin", "Accept"],
     exposedHeaders: ["Set-Cookie"],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
   })
 );
 
