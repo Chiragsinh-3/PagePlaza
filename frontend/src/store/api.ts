@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-const BASE_URL = "http://localhost:8000/api";
-// const BASE_URL = "https://pageplaza.onrender.com/api";
+// const BASE_URL = "http://localhost:8000/api";
+const BASE_URL = "https://pageplaza.onrender.com/api";
 
 const API_URLS = {
   // Auth Apis
