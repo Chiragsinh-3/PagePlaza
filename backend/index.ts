@@ -120,8 +120,8 @@ app.use(
   }
 );
 app.route("/ping").get((req, res) => {
-  res.json({ message: "Pong" });
   console.log("Ping received");
+  res.json({ message: "Pong" });
 });
 
 app.listen(PORT, () => {
