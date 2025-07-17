@@ -58,31 +58,31 @@ const CartPage = () => {
   };
 
   const cartItems = cartData?.data?.cart?.items || [];
-  const totalPrice = cartItems
+  const subtotal = cartItems
     .reduce(
       (acc: any, item: any) => acc + item.product.finalprice * item.quantity,
       0
-    )
-    .toFixed(2);
-  const handleCheckout = () => {
-    setIsCheckOutClicked(true);
-  };
+    );
+  
 
-  const calculateTotalAmount = () => {
+  const calculateShippingTotal = () => {
     if (!cartData?.data?.cart?.items) return 0;
-    return cartData?.data.cart.items.reduce(
-      (total: number, item: any) =>
-        total + item.product.finalprice * item.quantity,
+    return cartData.data.cart.items.reduce(
+      (total: number, item: any) => total + Number(item.product.shippingCharge || 0),
       0
     );
   };
-
+  const shippingTotal = calculateShippingTotal();
+  const totalPrice = (subtotal + shippingTotal).toFixed(2);
+  const handleCheckout = () => {
+    setIsCheckOutClicked(true);
+  };
   return (
     <div className='min-h-screen bg-linear-to-b from-violet-500 to-fuchsia-500 py-12 px-4 sm:px-6 lg:px-8'>
       <Addresses
         isCheckOutClicked={isCheckOutClicked}
         changeCheckOutClicked={setIsCheckOutClicked}
-        amount={calculateTotalAmount()}
+        amount={Number(totalPrice)}
         cartItems={cartItems}
       />
       <motion.div
@@ -198,11 +198,11 @@ const CartPage = () => {
                 <div className='space-y-4 mb-6'>
                   <div className='flex justify-between text-gray-600 dark:text-gray-400'>
                     <span>Subtotal</span>
-                    <span>₹{totalPrice}</span>
+                    <span>₹{subtotal.toFixed(2)}</span>
                   </div>
                   <div className='flex justify-between text-gray-600 dark:text-gray-400'>
                     <span>Shipping</span>
-                    <span>Free</span>
+                    <span>₹{shippingTotal.toFixed(2)}</span>
                   </div>
                   <div className='border-t border-gray-200 dark:border-gray-700 pt-4 mt-4'>
                     <div className='flex justify-between items-center'>

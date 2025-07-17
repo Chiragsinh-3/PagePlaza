@@ -104,6 +104,9 @@ app.use(
     });
   }
 );
+app.route("/ping").get((req, res) => {
+  res.json({ message: "Pong" });
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

@@ -101,13 +101,19 @@ const OrderConfirmationPage = () => {
                     <strong>Order ID:</strong> {id}
                   </p>
                   <p>
-                    <strong>Total Amount:</strong> ₹{order.totalAmount}
+                    <strong>Total Amount:</strong> ₹{order.data.totalAmount}
                   </p>
                   <p>
-                    <strong>Payment Method:</strong> {order.payment_method}
+                    <strong>Payment id:</strong>{" "}
+                    {order.data.payment_details.razorpay_payment_id}
                   </p>
                   <p>
-                    <strong>Payment Status:</strong> {order.payment_status}
+                    <strong>Payment Status:</strong>{" "}
+                    <span className={`${
+                      order.data.payment_status === "completed"
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-yellow-600 dark:text-yellow-400"
+                    } font-bold`}>{order.data.payment_status.toUpperCase()}</span>
                   </p>
                 </div>
               </motion.div>

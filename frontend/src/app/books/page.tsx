@@ -202,7 +202,7 @@ const Page = () => {
           </Link>
         </nav>
         <h1 className='mb-8 text-3xl'>
-          Find from over 1000s of used books online
+          Buy Physical used books online
         </h1>
         <div className='grid gap-8 md:grid-cols-[280px_1fr]'>
           <div className='space-y-6'>

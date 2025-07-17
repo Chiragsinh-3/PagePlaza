@@ -374,7 +374,7 @@ export default function BookDetail() {
                       onClick={handleFavorites}
                     >
                       <FiHeart
-                        fill={book.inWishlist ? "red" : ""}
+                        fill={book.inWishlist ? "red" : "transparent"}
                         className={book.inWishlist ? "text-red-500" : ""}
                       />
                       <span>Add</span>

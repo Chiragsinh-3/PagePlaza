@@ -138,7 +138,7 @@ const Footer = () => {
                   </a>
                 </div>
                 <p className='mt-2'>
-                  BookKart is a free platform where you can buy second hand
+                  PagePlaza is a free platform where you can buy second hand
                   books at very cheap prices. Buy used books online like college
                   books, school books, much more near you.
                 </p>
@@ -160,7 +160,7 @@ const Footer = () => {
                   <div className='flex items-center gap-4 rounded-xl  p-6 shadow-sm'>
                     <Clock />
                     <div className='ml-4'>
-                      <h2 className='text-lg font-medium-'>BookKart Trust</h2>
+                      <h2 className='text-lg font-medium-'>PagePlaza Trust</h2>
                       <p className='text-sm text-gray-600 dark:text-gray-400 '>
                         Money transferred safely after confirmation
                       </p>

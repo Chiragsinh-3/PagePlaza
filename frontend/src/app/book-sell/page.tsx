@@ -509,7 +509,7 @@ const Page = () => {
                                 select
                               </p>
                               <p className='text-sm text-gray-400 dark:text-gray-500'>
-                                Supports: JPG, PNG, GIF (Max 5MB each)
+                                Supports: JPG, PNG, GIF (Min 3 images required and max 4)
                               </p>
                             </div>
                           </div>
@@ -576,7 +576,7 @@ const Page = () => {
                 <div className='flex space-x-4'>
                   <CircleHelp className='h-6 w-6 text-purple-900' />
                   <h1 className='text-xl font-bold text-gray-800 dark:text-gray-100'>
-                    Optional Details
+                    About Book
                   </h1>
                 </div>
                 <p className='text-zinc-400 dark:text-zinc-500'>
@@ -607,7 +607,7 @@ const Page = () => {
                                   htmlFor={optionValue.toLowerCase()}
                                   className='ml-2 text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-gray-200'
                                 >
-                                  {optionValue}
+                                  {optionValue} <span className='text-red-400'>*</span>
                                 </label>
                                 {optionValue === "Description" ? (
                                   <textarea
@@ -733,7 +733,7 @@ const Page = () => {
                           onCheckedChange={(checked) =>
                             setNoShippingCharge(checked === true)
                           }
-                          required
+                          
                         />
                         <Label
                           htmlFor='noShippingCharge'

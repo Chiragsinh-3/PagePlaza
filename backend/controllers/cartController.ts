@@ -107,7 +107,7 @@ export const getCartByUser = async (req: Request, res: Response) => {
 
     let cart = await CartItems.findOne({ user }).populate({
       path: "items.product",
-      select: "title finalprice price images description",
+      select: "title finalprice price images description shippingCharge",
     });
     if (!cart) {
       return response(res, 404, "Cart is empty", null);

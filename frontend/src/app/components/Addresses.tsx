@@ -74,7 +74,7 @@ const Addresses = ({
   const [createOrUpdateAddress] = useCreateOrUpdateAddressMutation();
   const [createOrder] = useCreateOrUpdateOrderMutation();
   const [ordersLoaded, setOrdersLoaded] = useState(false);
-
+// console.log(amount)
   // console.log(isSuccess);
   const findExistingPendingOrder = useCallback(() => {
     if (!existingOrders?.data) return null;
@@ -199,7 +199,7 @@ const Addresses = ({
         totalAmount: amount,
         items: formattedItems,
       };
-
+// console.log("amount", amount);
       const response = await createOrder(orderData).unwrap();
 
       if (response.data?._id) {

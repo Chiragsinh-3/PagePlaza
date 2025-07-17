@@ -22,17 +22,17 @@ export default function RazorpayPayment({
 }: RazorpayPaymentProps) {
   const [createRazorpayOrder] = useCreateRazorpayOrderMutation();
   const [verifyPayment] = useVerifyPaymentMutation();
-
+console.log("amount in RazorpayPayment", amount);
   const makePayment = async () => {
     try {
       setIsManageDialogOpen(false);
       const { data } = await createRazorpayOrder({ orderId }).unwrap();
-
+      
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: amount * 100, // amount in paisa
+        amount: amount * 1000,
         currency: "INR",
-        name: "BookStore",
+        name: "Page Plaza",
         description: "Book Purchase",
         order_id: data.order.id,
         handler: async function (response: any) {
