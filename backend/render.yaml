@@ -2,10 +2,12 @@ services:
   - type: web
     name: pageplaza-backend
     env: node
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: npm install && npm run build
+    startCommand: node production.js
     envVars:
       - key: NODE_OPTIONS
         value: --max-old-space-size=2048
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 10000

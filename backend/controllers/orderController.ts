@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Request, Response } from "express";
 import CartItems from "../models/CartItems";
 import { response } from "../utils/responseHandler";

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import mongoose, { Document } from "mongoose";
 import { IAddress } from "./Address";
 

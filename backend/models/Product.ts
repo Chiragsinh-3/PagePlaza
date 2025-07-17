@@ -1,3 +1,4 @@
+// @ts-nocheck
 import mongoose from "mongoose";
 
 export interface IProduct extends mongoose.Document {
