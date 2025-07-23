@@ -120,8 +120,8 @@ app.use(
   }
 );
 app.route("/ping").get((req, res) => {
-  console.log("Ping received to pageplaza 💥💥 at " + new Date().getTime());
-  res.json({ message: "Pong" });
+  console.log("Ping received to pageplaza 💥💥 at " + new Date().toLocaleString());
+  res.json({ message: "Pong PagePlaza 🛰️ " + new Date().toLocaleString() });
 });
 
 app.listen(PORT, () => {
