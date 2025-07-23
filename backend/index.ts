@@ -120,7 +120,7 @@ app.use(
   }
 );
 app.route("/ping").get((req, res) => {
-  console.log("Ping received 💥💥");
+  console.log("Ping received to pageplaza 💥💥 at " + new Date().getTime());
   res.json({ message: "Pong" });
 });
 
